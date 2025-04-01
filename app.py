@@ -2,7 +2,7 @@ from flask import Flask, render_template, request
 import os
 import psycopg2
 
-os.chdir(r'D:\\Faculdade\\REPs\\Pyquiz')
+# os.chdir(r'D:\\Faculdade\\REPs\\Pyquiz')
 print("Diretório atual:", os.getcwd())
 app = Flask(__name__)
 
@@ -13,6 +13,10 @@ DB_PASSWORD = "a11anl3tciaem4nue11"  # Senha do banco
 
 @app.route("/")  
 def home():
+    return render_template("tela_inicial.html")
+
+@app.route("/form_cad_usuario")  
+def form_cad_usuario():
     return render_template("cadastro_user.html")
 
 @app.route("/cadastro_usuario", methods=['POST'])  

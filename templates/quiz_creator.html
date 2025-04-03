@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Criador de Quiz</h2>
+    
+    <form id="quizForm" method="POST" action="{{ url_for('salvar_quiz') }}">
+        <!-- Área de questões (renderizada pelo JS) -->
+        <div id="questionsContainer">
+            <!-- Cada questão será adicionada aqui dinamicamente -->
+        </div>
+        
+        <button type="button" class="btn btn-primary mt-3" id="addQuestion">
+            + Adicionar Questão
+        </button>
+        
+        <button type="submit" class="btn btn-success mt-3">
+            Salvar Quiz
+        </button>
+    </form>
+</div>
+
+<!-- Inclui os scripts necessários -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
+<script src="{{ url_for('static', filename='js/quiz_builder.js') }}"></script>
+{% endblock %}

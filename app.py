@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
+from flask.templating import TemplateNotFound
 import os
 import psycopg2
 
 # os.chdir(r'D:\\Faculdade\\REPs\\Pyquiz')
 print("Diretório atual:", os.getcwd())
-app = Flask(__name__)
+app = Flask(__name__, template_folder='templates')
 
 DB_HOST = "pyquiz.ctolbpze49xs.us-east-1.rds.amazonaws.com"  # Altere conforme necessário
 DB_NAME = "pyquizt1"  # Nome do banco de dados
@@ -13,11 +14,21 @@ DB_PASSWORD = "a11anl3tciaem4nue11"  # Senha do banco
 
 @app.route("/")  
 def home():
-    return render_template("tela_inicial.html")
+    return render_template("base.html")
 
 @app.route("/form_cad_usuario")  
 def form_cad_usuario():
     return render_template("cadastro_user.html")
+
+@app.route('/criar-quiz')
+def criar_quiz():
+    try:
+        print("Tentando renderizar quiz_creator.html")  # Verifique no terminal
+        return render_template('quiz_creator.html')
+    except TemplateNotFound:
+        return "Erro: Arquivo quiz_creator.html não encontrado na pasta templates", 404
+    except Exception as e:
+        return f"Erro ao renderizar: {str(e)}", 500
 
 @app.route("/cadastro_usuario", methods=['POST'])  
 def cad_usuario():

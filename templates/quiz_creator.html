@@ -1,26 +1,54 @@
-{% extends "base.html" %}
-
-{% block content %}
-<div class="container mt-4">
-    <h2>Criador de Quiz</h2>
-    
-    <form id="quizForm" method="POST" action="{{ url_for('salvar_quiz') }}">
-        <!-- Área de questões (renderizada pelo JS) -->
-        <div id="questionsContainer">
-            <!-- Cada questão será adicionada aqui dinamicamente -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criador de Quiz</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/quiz_builder.css') }}">
+</head>
+<body>
+    <!-- Cabeçalho -->
+    <header class="quiz-header">
+        <div class="header-content">
+            <button id="back-button" class="btn btn-back">
+                ← Voltar
+            </button>
+            <div class="user-profile">
+                <span id="username">Usuário Logado</span>
+                <div id="profile-pic" class="profile-pic"></div>
+            </div>
         </div>
-        
-        <button type="button" class="btn btn-primary mt-3" id="addQuestion">
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <div class="quiz-container">
+        <!-- Cabeçalho do Quiz -->
+        <div class="quiz-info">
+            <div class="form-group">
+                <label for="quiz-name">Nome do Quiz:</label>
+                <input type="text" id="quiz-name" class="form-control" placeholder="Digite o nome do quiz" required>
+            </div>
+            <div class="form-group">
+                <label for="quiz-description">Descrição:</label>
+                <textarea id="quiz-description" class="form-control" rows="3" placeholder="Digite uma descrição"></textarea>
+            </div>
+        </div>
+
+        <!-- Lista de Questões -->
+        <div id="questions-container" class="questions-list"></div>
+
+        <!-- Botões -->
+        <button id="add-question-btn" class="btn btn-primary">
             + Adicionar Questão
         </button>
-        
-        <button type="submit" class="btn btn-success mt-3">
+        <button id="save-quiz-btn" class="btn btn-success mt-3">
             Salvar Quiz
         </button>
-    </form>
-</div>
+    </div>
 
-<!-- Inclui os scripts necessários -->
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
-<script src="{{ url_for('static', filename='js/quiz_builder.js') }}"></script>
-{% endblock %}
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
+    <script src="{{ url_for('static', filename='js/quiz_builder.js') }}"></script>
+</body>
+</html>

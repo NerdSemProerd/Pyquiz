@@ -15,21 +15,18 @@ DB_PASSWORD = "a11anl3tciaem4nue11"  # Senha do banco
 @app.route("/")  
 def home():
     return render_template("base.html")
+@app.route("/user_login")  
+def user_login():
+    return render_template("user_login.html")
 
 @app.route("/form_cad_usuario")  
 def form_cad_usuario():
     return render_template("cadastro_user.html")
 
-@app.route('/criar-quiz')
+@app.route('/criar_quiz')
 def criar_quiz():
-    try:
-        print("Tentando renderizar quiz_creator.html")  # Verifique no terminal
-        return render_template('quiz_creator.html')
-    except TemplateNotFound:
-        return "Erro: Arquivo quiz_creator.html não encontrado na pasta templates", 404
-    except Exception as e:
-        return f"Erro ao renderizar: {str(e)}", 500
-
+    return render_template("quiz_creator.html")
+        
 @app.route("/cadastro_usuario", methods=['POST'])  
 def cad_usuario():
     if request.method == 'POST':

@@ -1,0 +1,161 @@
+/* Estilo do Cabeçalho */
+.quiz-header {
+    background-color: #f8f9fa;
+    padding: 15px 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.btn-back {
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    color: #4285F4;
+    cursor: pointer;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #4285F4;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+/* Container Principal */
+.quiz-container {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+/* Seção de Informações do Quiz */
+.quiz-info {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.quiz-info .form-group {
+    margin-bottom: 15px;
+}
+
+.quiz-info label {
+    font-weight: 500;
+    margin-bottom: 5px;
+    display: block;
+}
+
+/* Estilo das Questões - ATUALIZADO */
+.question-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-left: 4px solid #4285F4;
+    position: relative;
+}
+
+.question-header {
+    margin-bottom: 15px; /* Espaço aumentado */
+}
+
+.delete-question {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: #dc3545;
+    cursor: pointer;
+}
+
+.question-text {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px; /* Espaço maior abaixo da pergunta */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* Estilo das Respostas - ATUALIZADO */
+.answers-list {
+    margin-top: 10px; /* Espaço entre pergunta e respostas */
+}
+
+.answer-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px; /* Espaço entre respostas */
+    padding: 8px;
+    background: #fff;
+    border-radius: 4px;
+    border: 1px solid #eee;
+}
+
+.answer-item input[type="text"] {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.answer-item input[type="number"] {
+    width: 80px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.delete-answer {
+    background: none;
+    border: none;
+    color: #dc3545;
+    cursor: pointer;
+}
+
+/* Botões */
+.add-answer-btn {
+    margin-top: 5px;
+    background: #f8f9fa;
+    border: 1px dashed #ccc;
+    width: 100%;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: #4285F4;
+    border-color: #4285F4;
+}
+
+.btn-success {
+    background-color: #34a853;
+    border-color: #34a853;
+}
+
+/* Efeitos de Arrastar */
+.sortable-ghost {
+    opacity: 0.5;
+    background: #cce5ff;
+}

@@ -97,7 +97,7 @@
     border-radius: 4px;
 }
 
-/* Estilo das Respostas - ATUALIZADO */
+/* Estilo das Respostas */
 .answers-list {
     margin-top: 10px;
 }
@@ -105,7 +105,7 @@
 .answer-item {
     display: flex;
     align-items: center;
-    gap: 10px;
+    /* gap: 10px; */ /* Removido para evitar botão de deletar em posição incorreta*/
     margin-bottom: 8px;
     padding: 8px;
     background: #fff;
@@ -119,12 +119,16 @@
     border: 1px solid #ddd;
     border-radius: 4px;
 }
-
+/* Pontuação */
 .answer-item input[type="number"] {
-    width: 80px;
+    /* width: 80px; */
     padding: 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
+}
+
+.col-md-2{
+    text-align: center !important; 
 }
 
 .delete-answer {
@@ -133,9 +137,9 @@
     color: #dc3545;
     cursor: pointer;
     padding: 0;
-    display: flex;
+    /* display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: center; */
     height: 100%;
     font-size: 1.1rem;
 }
@@ -148,6 +152,10 @@
     width: 100%;
     padding: 8px;
     cursor: pointer;
+}
+
+#save-quiz-btn {  /* Usado para sobrepor a margem colocada pelo boostrap */
+    margin-top: 0 !important; 
 }
 
 .btn-primary {

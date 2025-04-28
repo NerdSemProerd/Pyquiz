@@ -23,9 +23,7 @@ def user_login():
 def form_cad_usuario():
     return render_template("cadastro_user.html")
 
-@app.route('/criar_quiz')
-def criar_quiz():
-    return render_template("quiz_creator.html")
+
         
 @app.route("/cadastro_usuario", methods=['POST'])  
 def cad_usuario():
@@ -66,10 +64,36 @@ def cad_usuario():
         except Exception as e:
             return f"Erro ao cadastrar usuário: {e}"
         
-    
-# @app.route("/contato")  
-# def contato():
-#     return "Página de Contato"
+        
+@app.route('/criar_quiz')
+def criar_quiz():
+    return render_template("quiz_creator.html")
+
+@app.route("/salvar_quiz", methods=['POST'])  
+def cad_quiz():
+    if request.method == 'POST':
+        data = request.get_json()
+        print(data)
+    return jsonify({'message': 'Quiz salvo com sucesso!'})
+
+        # try:
+        #     conn = psycopg2.connect(
+        #         host=DB_HOST,
+        #         database=DB_NAME,
+        #         user=DB_USER,
+        #         password=DB_PASSWORD
+        #     )
+        #     cur = conn.cursor()
+            
+        #     query = "INSERT INTO usuarios (nome, sobrenome, email, senha) VALUES (%s, %s, %s, %s)"
+        #     cur.execute(query, (nome, sobrenome, email, senha))
+        #     conn.commit()
+
+        #     cur.close()
+        #     conn.close()
+        #     return "Cadastro realizado com sucesso!"
+        # except Exception as e:
+        #     return f"Erro ao cadastrar usuário: {e}"
 
 if __name__ == "__main__":
     app.run(debug=True)

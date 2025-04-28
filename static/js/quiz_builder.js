@@ -123,6 +123,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
         console.log('Dados do Quiz:', quizData);
         // Aqui você faria a requisição para o Flask
+        
+        fetch('/salvar_quiz', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json' // Dizendo que estamos mandando JSON
+            },
+            body: JSON.stringify(quizData) // Convertendo o objeto em texto JSON
+        })
+        .then(response => response.json()) // Espera resposta do Flask
+        .then(data => {
+            console.log('Quiz salvo com sucesso!', data);
+            // Aqui você pode redirecionar ou mostrar um alerta
+        })
+        .catch(error => {
+            console.error('Erro ao salvar quiz:', error);
+        });
+        
     });
 
     // Simulação do usuário logado (remova quando implementar)

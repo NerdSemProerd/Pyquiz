@@ -64,7 +64,7 @@
     display: block;
 }
 
-/* Estilo das Questões - ATUALIZADO */
+/* Estilo das Questões */
 .question-card {
     background: #f8f9fa;
     border-radius: 8px;
@@ -75,7 +75,7 @@
 }
 
 .question-header {
-    margin-bottom: 15px; /* Espaço aumentado */
+    margin-bottom: 15px;
 }
 
 .delete-question {
@@ -92,21 +92,21 @@
 .question-text {
     width: 100%;
     padding: 10px;
-    margin-bottom: 20px; /* Espaço maior abaixo da pergunta */
+    margin-bottom: 20px;
     border: 1px solid #ddd;
     border-radius: 4px;
 }
 
 /* Estilo das Respostas - ATUALIZADO */
 .answers-list {
-    margin-top: 10px; /* Espaço entre pergunta e respostas */
+    margin-top: 10px;
 }
 
 .answer-item {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 8px; /* Espaço entre respostas */
+    margin-bottom: 8px;
     padding: 8px;
     background: #fff;
     border-radius: 4px;
@@ -132,6 +132,12 @@
     border: none;
     color: #dc3545;
     cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 1.1rem;
 }
 
 /* Botões */

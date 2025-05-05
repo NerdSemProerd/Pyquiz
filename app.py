@@ -1,11 +1,14 @@
 from flask import Flask, jsonify, render_template, request, redirect, url_for
 from flask.templating import TemplateNotFound
+# from cadastro_usuario.rotas_cad_user import cad_user_bp
 import os
 import psycopg2
 
 # os.chdir(r'D:\\Faculdade\\REPs\\Pyquiz')
 print("Diretório atual:", os.getcwd())
 app = Flask(__name__, template_folder='templates')
+
+# app.register_blueprint(cad_user_bp, url_prefix='/usuario')  # Registra o blueprint com o prefixo /usuario
 
 DB_HOST = "pyquiz.ctolbpze49xs.us-east-1.rds.amazonaws.com"  # Altere conforme necessário
 DB_NAME = "pyquizt1"  # Nome do banco de dados
@@ -67,7 +70,7 @@ def cad_usuario():
         
 @app.route('/criar_quiz')
 def criar_quiz():
-    return render_template("quiz_creator.html")
+    return render_template("quiz_maker.html")
 
 @app.route("/salvar_quiz", methods=['POST'])  
 def cad_quiz():

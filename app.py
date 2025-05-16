@@ -1,8 +1,15 @@
 from flask import Flask, jsonify, render_template, request, redirect, url_for
 from flask.templating import TemplateNotFound
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text, TIMESTAMP,FLOAT
+import json
 # from cadastro_usuario.rotas_cad_user import cad_user_bp
 import os
 import psycopg2
+
+
+
+
 
 # os.chdir(r'D:\\Faculdade\\REPs\\Pyquiz')
 print("Diretório atual:", os.getcwd())
@@ -10,10 +17,45 @@ app = Flask(__name__, template_folder='templates')
 
 # app.register_blueprint(cad_user_bp, url_prefix='/usuario')  # Registra o blueprint com o prefixo /usuario
 
-DB_HOST = "192.168.192.45"  # Altere conforme necessário
+DB_HOST = "192.168.1.3"  # Altere conforme necessário
 DB_NAME = "pyquiz"  # Nome do banco de dados
 DB_USER = "postgres"  # Usuário do banco
 DB_PASSWORD = "a11anl3tciaem4nue11"  # Senha do banco
+
+
+
+
+# Cadastro de banco com SQLAlchemy
+# Configura o banco (pode ser SQLite, PostgreSQL, etc)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.1.3:5432/pyquiz'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Inicializa o SQLAlchemy com o app
+db = SQLAlchemy(app)
+
+
+class Quiz_nome(db.Model):
+    id_quiz = db.Column(db.Integer, primary_key=True) #ID do quiz de acordo com o banco, define que vai ser inteiro e chave primária 
+    nome_quiz = db.Column(db.String(255)) #define que vai ser string
+    descricao_quiz = db.Column(db.TEXT) #define que vai ser string
+    questions = db.relationship('Question', backref='quiz', cascade="all, delete")
+
+class Quiz_questao(db.Model):
+    id_questao = db.Column(db.Integer, primary_key=True)
+    questao = db.Column(db.String(255))
+    quiz_id = db.Column(db.Integer, db.ForeignKey('quiz.id'))
+    answers = db.relationship('Answer', backref='question', cascade="all, delete")
+
+class Questao_resposta(db.Model):
+    id_resposta = db.Column(db.Integer, primary_key=True)
+    resposta = db.Column(db.String(255))
+    points = db.Column(db.float)
+    question_id = db.Column(db.Integer, db.ForeignKey('id_questao'))
+
+
+
+
+
 
 @app.route("/")  
 def home():
@@ -26,6 +68,15 @@ def user_login():
 def form_cad_usuario():
     return render_template("cadastro_user.html")
 
+# Teste de conexão com o banco de dados
+
+# @app.route("/testar_conexao")
+# def testar_conexao():
+#     try:
+#         db.session.execute(text("SELECT 1"))
+#         return "Conexão com o banco bem-sucedida!"
+#     except Exception as e:
+#         return f"Erro ao conectar: {e}"
 
         
 @app.route("/cadastro_usuario", methods=['POST'])  
@@ -76,7 +127,16 @@ def criar_quiz():
 def cad_quiz():
     if request.method == 'POST':
         data = request.get_json()
-        print(data)
+       
+        quiz_nome = data['name']
+        print(quiz_nome)
+
+
+
+
+        with open('quizpronto.json', 'w') as f:
+            json.dump(data, f, indent=4)
+    print("Data salva no quizpronto.json")
     return jsonify({'message': 'Quiz salvo com sucesso!'})
 
         # try:

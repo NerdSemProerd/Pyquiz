@@ -35,22 +35,32 @@ db = SQLAlchemy(app)
 
 
 class Quiz_nome(db.Model):
-    id_quiz = db.Column(db.Integer, primary_key=True) #ID do quiz de acordo com o banco, define que vai ser inteiro e chave primária 
-    nome_quiz = db.Column(db.String(255)) #define que vai ser string
-    descricao_quiz = db.Column(db.TEXT) #define que vai ser string
-    questions = db.relationship('Question', backref='quiz', cascade="all, delete")
+    __tablename__ = 'quiz'
+
+    id_quiz = db.Column(db.Integer, primary_key=True)
+    nome_quiz = db.Column(db.String(255))
+    descricao_quiz = db.Column(db.Text)
+    
+    questoes = db.relationship('Quiz_questao', backref='quiz', cascade="all, delete")
+
 
 class Quiz_questao(db.Model):
+    __tablename__ = 'questao'
+
     id_questao = db.Column(db.Integer, primary_key=True)
     questao = db.Column(db.String(255))
-    quiz_id = db.Column(db.Integer, db.ForeignKey('quiz.id'))
-    answers = db.relationship('Answer', backref='question', cascade="all, delete")
+    quiz_id = db.Column(db.Integer, db.ForeignKey('quiz.id_quiz'))
+
+    respostas = db.relationship('Questao_resposta', backref='questao', cascade="all, delete")
+
 
 class Questao_resposta(db.Model):
+    __tablename__ = 'questao_resposta'
+
     id_resposta = db.Column(db.Integer, primary_key=True)
     resposta = db.Column(db.String(255))
-    points = db.Column(db.float)
-    question_id = db.Column(db.Integer, db.ForeignKey('id_questao'))
+    pontuacao = db.Column(db.Float)
+    question_id = db.Column(db.Integer, db.ForeignKey('questao.id_questao'))
 
 
 

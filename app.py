@@ -133,40 +133,41 @@ def cad_usuario():
 def criar_quiz():
     return render_template("quiz_maker.html")
 
+
+def salvar_quiz(json_data):
+    # 1. Cria o quiz
+    novo_quiz = Quiz_nome(
+        nome_quiz=json_data['name'],
+        descricao_quiz=json_data['description']
+    )
+    db.session.add(novo_quiz)
+    db.session.flush()  # garante que o ID do quiz será gerado
+
+    # 2. Cria as questões e respostas
+    for questao_json in json_data['questions']:
+        nova_questao = Quiz_questao(
+            questao=questao_json['questions'],
+            quiz_id=novo_quiz.id_quiz
+        )
+        db.session.add(nova_questao)
+        db.session.flush()  # garante que o ID da questão será gerado
+
+        # 3. Respostas da questão
+        for resposta_json in questao_json['answers']:
+            nova_resposta = Questao_resposta(
+                resposta=resposta_json['answers'],
+                pontuacao=resposta_json['points'],
+                question_id=nova_questao.id_questao
+            )
+            db.session.add(nova_resposta)
+
+
 @app.route("/salvar_quiz", methods=['POST'])  
 def cad_quiz():
     if request.method == 'POST':
-        data = request.get_json()
-       
-        quiz_nome = data['name']
-        print(quiz_nome)
-
-
-
-
-        with open('quizpronto.json', 'w') as f:
-            json.dump(data, f, indent=4)
-    print("Data salva no quizpronto.json")
+        json_data = request.get_json()
+        salvar_quiz(json_data)
     return jsonify({'message': 'Quiz salvo com sucesso!'})
-
-        # try:
-        #     conn = psycopg2.connect(
-        #         host=DB_HOST,
-        #         database=DB_NAME,
-        #         user=DB_USER,
-        #         password=DB_PASSWORD
-        #     )
-        #     cur = conn.cursor()
-            
-        #     query = "INSERT INTO usuarios (nome, sobrenome, email, senha) VALUES (%s, %s, %s, %s)"
-        #     cur.execute(query, (nome, sobrenome, email, senha))
-        #     conn.commit()
-
-        #     cur.close()
-        #     conn.close()
-        #     return "Cadastro realizado com sucesso!"
-        # except Exception as e:
-        #     return f"Erro ao cadastrar usuário: {e}"
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -17,7 +17,7 @@ app = Flask(__name__, template_folder='templates')
 
 # app.register_blueprint(cad_user_bp, url_prefix='/usuario')  # Registra o blueprint com o prefixo /usuario
 
-DB_HOST = "192.168.1.3"  # Altere conforme necessário
+DB_HOST = "192.168.192.45"  # Altere conforme necessário
 DB_NAME = "pyquiz"  # Nome do banco de dados
 DB_USER = "postgres"  # Usuário do banco
 DB_PASSWORD = "a11anl3tciaem4nue11"  # Senha do banco
@@ -27,7 +27,7 @@ DB_PASSWORD = "a11anl3tciaem4nue11"  # Senha do banco
 
 # Cadastro de banco com SQLAlchemy
 # Configura o banco (pode ser SQLite, PostgreSQL, etc)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.1.3:5432/pyquiz'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.192.45:5432/pyquiz'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Inicializa o SQLAlchemy com o app
@@ -60,9 +60,7 @@ class Questao_resposta(db.Model):
     id_resposta = db.Column(db.Integer, primary_key=True)
     resposta = db.Column(db.String(255))
     pontuacao = db.Column(db.Float)
-    question_id = db.Column(db.Integer, db.ForeignKey('questao.id_questao'))
-
-
+    question_id = db.Column('id_questao', db.Integer, db.ForeignKey('questao.id_questao'))  # Mapeia para a coluna correta
 
 
 
@@ -134,6 +132,13 @@ def criar_quiz():
     return render_template("quiz_maker.html")
 
 
+
+@app.route("/salvar_quiz", methods=['POST'])  
+def cad_quiz():
+    if request.method == 'POST':
+        json_data = request.get_json()
+        salvar_quiz(json_data)
+    return jsonify({'message': 'Quiz salvo com sucesso!'})
 def salvar_quiz(json_data):
     # 1. Cria o quiz
     novo_quiz = Quiz_nome(
@@ -146,7 +151,7 @@ def salvar_quiz(json_data):
     # 2. Cria as questões e respostas
     for questao_json in json_data['questions']:
         nova_questao = Quiz_questao(
-            questao=questao_json['questions'],
+            questao=questao_json['text'],  # Alterado para 'text' que é a chave no JSON
             quiz_id=novo_quiz.id_quiz
         )
         db.session.add(nova_questao)
@@ -155,19 +160,12 @@ def salvar_quiz(json_data):
         # 3. Respostas da questão
         for resposta_json in questao_json['answers']:
             nova_resposta = Questao_resposta(
-                resposta=resposta_json['answers'],
+                resposta=resposta_json['text'],  # Alterado para 'text' que é a chave no JSON
                 pontuacao=resposta_json['points'],
                 question_id=nova_questao.id_questao
             )
             db.session.add(nova_resposta)
-
-
-@app.route("/salvar_quiz", methods=['POST'])  
-def cad_quiz():
-    if request.method == 'POST':
-        json_data = request.get_json()
-        salvar_quiz(json_data)
-    return jsonify({'message': 'Quiz salvo com sucesso!'})
+    db.session.commit()
 
 if __name__ == "__main__":
     app.run(debug=True)

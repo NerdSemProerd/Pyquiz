@@ -34,6 +34,15 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
+class Usuario(db.Model):
+    _tablename_ = 'quiz'
+
+    id_nome = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100), unique=True, nullable=False)
+    email = db.Column(db.String(255))
+    senha_hash = db.Column(db.String(128))
+    autonomia = db.Column(db.String(20), default='user')  # 'Comum' ou 'Admin'
+
 class Quiz_nome(db.Model):
     __tablename__ = 'quiz'
 

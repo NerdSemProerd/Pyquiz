@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => { // Espera o DOM carregar antes de executar o script, evitando erros de elementos não encontrados
     // Elementos da UI
     const backButton = document.getElementById('back-button');
     const questionsContainer = document.getElementById('questions-container');

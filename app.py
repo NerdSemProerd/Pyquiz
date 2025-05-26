@@ -2,6 +2,7 @@ from flask import Flask, jsonify, render_template, request, redirect, url_for
 from flask.templating import TemplateNotFound
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text, TIMESTAMP,FLOAT
+from werkzeug.security import generate_password_hash
 import json
 # from cadastro_usuario.rotas_cad_user import cad_user_bp
 import os
@@ -17,17 +18,18 @@ app = Flask(__name__, template_folder='templates')
 
 # app.register_blueprint(cad_user_bp, url_prefix='/usuario')  # Registra o blueprint com o prefixo /usuario
 
-DB_HOST = "192.168.192.45"  # Altere conforme necessário
+# DB_HOST = "192.168.192.45"  # Altere conforme necessário
+DB_HOST = "192.168.1.3"  
 DB_NAME = "pyquiz"  # Nome do banco de dados
 DB_USER = "postgres"  # Usuário do banco
 DB_PASSWORD = "a11anl3tciaem4nue11"  # Senha do banco
 
 
-
-
 # Cadastro de banco com SQLAlchemy
 # Configura o banco (pode ser SQLite, PostgreSQL, etc)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.192.45:5432/pyquiz'
+
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.192.45:5432/pyquiz'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.1.3:5432/pyquiz'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Inicializa o SQLAlchemy com o app
@@ -35,7 +37,7 @@ db = SQLAlchemy(app)
 
 
 class Usuario(db.Model):
-    _tablename_ = 'quiz'
+    _tablename_ = 'usuarios'
 
     id_nome = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
@@ -77,9 +79,34 @@ class Questao_resposta(db.Model):
 @app.route("/")  
 def home():
     return render_template("base.html")
+
+
+
+
 @app.route("/user_login")  
 def user_login():
     return render_template("user_login.html")
+
+
+
+
+
+@app.route("/login", methods=['POST'])
+def login():
+    if request.method == 'POST':
+        json_data_login = request.get_json()
+        obter_credenciais(json_data_login)
+    return jsonify({'message': 'Credenciais recebidas com sucesso!'})
+def obter_credenciais(json_data_login):
+    email_login=json_data_login['username'],
+    senha_login=json_data_login['password']
+
+    print(f"Email: {email_login}")
+    print(f"Senha: {senha_login}")
+    return ...
+
+
+
 
 @app.route("/form_cad_usuario")  
 def form_cad_usuario():
@@ -107,14 +134,14 @@ def cad_usuario():
         telefone = request.form.get("telefone")
         senha = request.form.get("senha")
 
-        # print(request.form)
+        senha_hash = generate_password_hash(senha)
         
-
+        # print(request.form)
         print(f"Nome: {nome}")
         print(f"Sobrenome: {sobrenome}")
         print(f"Email: {email}")
         print(f"Telefone: {telefone}")
-        print(f"Senha: {senha}")
+        print(f"Senha: {senha_hash}")
 
         try:
             conn = psycopg2.connect(
@@ -125,8 +152,8 @@ def cad_usuario():
             )
             cur = conn.cursor()
             
-            query = "INSERT INTO usuarios (nome, sobrenome, email, senha) VALUES (%s, %s, %s, %s)"
-            cur.execute(query, (nome, sobrenome, email, senha))
+            query = "INSERT INTO usuarios (nome, sobrenome, email, senha_hash) VALUES (%s, %s, %s, %s)"
+            cur.execute(query, (nome, sobrenome, email, senha_hash))
             conn.commit()
 
             cur.close()

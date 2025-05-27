@@ -1,19 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Elementos da UI
-    const loginBtn = document.getElementById('btn-login');
+    const loginForm = document.getElementById('login-form');
     const usernameInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
-    const errorMessage = console.log();
+    const errorMessage = document.getElementById('error-message'); // Corrigido aqui
 
     // Evento de envio do formulário
-    loginBtn.addEventListener('submit', async (event) => {
-        event.preventDefault(); // Previne o envio padrão do formulário
+    loginForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        errorMessage.classList.add('d-none'); // Esconde mensagem de erro
 
         const username = usernameInput.value.trim();
         const password = passwordInput.value.trim();
 
         if (!username || !password) {
-            errorMessage.textContent = 'Por favor, preencha todos os campos.';
+            showError('Por favor, preencha todos os campos.');
             return;
         }
 
@@ -23,18 +24,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ username, password })
+                body: JSON.stringify({ 
+                    email: username,  // Mudei para 'email' para bater com seu backend
+                    password: password 
+                })
             });
 
             if (response.ok) {
-                window.location.href = '/dashboard'; // Redireciona para o dashboard em caso de sucesso
+                window.location.href = '/dashboard';
             } else {
                 const data = await response.json();
-                errorMessage.textContent = data.error || 'Erro ao fazer login. Tente novamente.';
+                showError(data.error || 'Erro ao fazer login. Tente novamente.');
             }
         } catch (error) {
             console.error('Erro na requisição:', error);
-            errorMessage.textContent = 'Erro ao conectar ao servidor. Tente novamente mais tarde.';
+            showError('Erro ao conectar ao servidor. Tente novamente mais tarde.');
         }
     });
+
+    function showError(message) {
+        errorMessage.textContent = message;
+        errorMessage.classList.remove('d-none');
+    }
 });

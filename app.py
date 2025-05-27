@@ -18,8 +18,8 @@ app = Flask(__name__, template_folder='templates')
 
 # app.register_blueprint(cad_user_bp, url_prefix='/usuario')  # Registra o blueprint com o prefixo /usuario
 
-# DB_HOST = "192.168.192.45"  # Altere conforme necessário
-DB_HOST = "192.168.1.3"  
+DB_HOST = "192.168.192.45"  # Altere conforme necessário
+# DB_HOST = "192.168.1.3"  
 DB_NAME = "pyquiz"  # Nome do banco de dados
 DB_USER = "postgres"  # Usuário do banco
 DB_PASSWORD = "a11anl3tciaem4nue11"  # Senha do banco
@@ -28,8 +28,8 @@ DB_PASSWORD = "a11anl3tciaem4nue11"  # Senha do banco
 # Cadastro de banco com SQLAlchemy
 # Configura o banco (pode ser SQLite, PostgreSQL, etc)
 
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.192.45:5432/pyquiz'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.1.3:5432/pyquiz'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.192.45:5432/pyquiz'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.1.3:5432/pyquiz'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Inicializa o SQLAlchemy com o app
@@ -93,17 +93,27 @@ def user_login():
 
 @app.route("/login", methods=['POST'])
 def login():
-    if request.method == 'POST':
-        json_data_login = request.get_json()
-        obter_credenciais(json_data_login)
-    return jsonify({'message': 'Credenciais recebidas com sucesso!'})
-def obter_credenciais(json_data_login):
-    email_login=json_data_login['username'],
-    senha_login=json_data_login['password']
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+    
+    # Aqui você faria a validação real
+    if email == 'teste@exemplo.com' and password == '123':
+        return jsonify({'success': True}), 200
+    else:
+        return jsonify({'error': 'Credenciais inválidas'}), 401
+# def login():
+#     if request.method == 'POST':
+#         json_data_login = request.get_json()
+#         obter_credenciais(json_data_login)
+#     return jsonify({'message': 'Credenciais recebidas com sucesso!'})
+# def obter_credenciais(json_data_login):
+#     email_login=json_data_login['username'],
+#     senha_login=json_data_login['password']
 
-    print(f"Email: {email_login}")
-    print(f"Senha: {senha_login}")
-    return ...
+#     print(f"Email: {email_login}")
+#     print(f"Senha: {senha_login}")
+#     return ...
 
 
 

@@ -1,9 +1,11 @@
 from flask import Flask, jsonify, render_template, request, redirect, url_for
 from flask.templating import TemplateNotFound
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import text, TIMESTAMP,FLOAT
+from sqlalchemy import text
 from werkzeug.security import generate_password_hash, check_password_hash
-import json
+from flask_jwt_extended import create_access_token
+from datetime import timedelta
+
 # from cadastro_usuario.rotas_cad_user import cad_user_bp
 import os
 import psycopg2
@@ -97,14 +99,31 @@ def login():
     j_email = j_data.get('email')
     j_password = j_data.get('password')
 
-    cred_email = Usuario.query.filter_by(email=j_email).first()
-    if not cred_email:
+    cred_usuario = Usuario.query.filter_by(email=j_email).first()
+    if not cred_usuario:
         return jsonify({'message': 'Email não encontrado'}), 404
     else:
-        if not cred_email or not check_password_hash(cred_email.senha_hash, j_password):
+        if not cred_usuario or not check_password_hash(cred_usuario.senha_hash, j_password):
             return jsonify({'message': 'Email ou senha incorretos!'}), 401
-    if cred_email and check_password_hash(cred_email.senha_hash, j_password):
+    if cred_usuario and check_password_hash(cred_usuario.senha_hash, j_password):
         return jsonify({'message': 'Login realizado com sucesso!'}), 200
+
+    token = create_access_token(
+        identity=cred_usuario.id,  # Identificador principal (obrigatório)
+        additional_claims={  # Dados extras que você quer incluir
+            "nome": cred_usuario.nome,
+            "email": cred_usuario.email,
+            "autonomia": cred_usuario.autonomia  # se tiver permissões
+        },
+        expires_delta=timedelta(hours=1)  # Token expira em 1 hora
+    )
+
+    return jsonify({
+        "access_token": token,
+        "user_id": cred_usuario.id,
+        "nome": cred_usuario.nome,  # Dados extras para o frontend (opcional)
+        "autonomia": cred_usuario.autonomia
+    })
 
 
 @app.route("/form_cad_usuario")  

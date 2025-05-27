@@ -13,11 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const username = usernameInput.value.trim();
         const password = passwordInput.value.trim();
 
-        if (!username || !password) {
-            showError('Por favor, preencha todos os campos.');
-            return;
-        }
-
         try {
             const response = await fetch('/login', {
                 method: 'POST',
@@ -31,10 +26,26 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (response.ok) {
-                window.location.href = '/dashboard';
+                window.location.href = '/';
             } else {
-                const data = await response.json();
-                showError(data.error || 'Erro ao fazer login. Tente novamente.');
+                switch (response.status) {
+                    case 404:
+                        showError(`
+                                    Email não encontrado! Não possui cadastro? 
+                                    <a href="/form_cad_usuario" class="alert-link">
+                                        Cadastre-se aqui
+                                    </a>
+                                `, true);
+                        break;
+                    case 401:
+                        showError('Email ou senha incorretos.');
+                        break;
+                    case 500:
+                        showError('Erro interno do servidor. Tente novamente mais tarde.');
+                        break;
+                    default:
+                        showError('Erro desconhecido. Tente novamente.');
+                }
             }
         } catch (error) {
             console.error('Erro na requisição:', error);
@@ -42,8 +53,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    function showError(message) {
-        errorMessage.textContent = message;
+    function showError(message, isHTML = false) {
+        if (isHTML) {
+            errorMessage.innerHTML = message; // Permite HTML
+        } else {
+            errorMessage.textContent = message; // Apenas texto
+        }
         errorMessage.classList.remove('d-none');
     }
 });

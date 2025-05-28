@@ -1,0 +1,80 @@
+:root {
+    --primary-color: #4e73df;
+    --secondary-color: #f8f9fc;
+    --accent-color: #2e59d9;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+}
+
+.navbar {
+    background-color: var(--primary-color);
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+.navbar-brand {
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: white !important;
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+}
+
+.nav-link:hover {
+    color: white !important;
+}
+
+.quiz-card {
+    transition: all 0.3s ease;
+    border-radius: 0.35rem;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+    border: 1px solid #e3e6f0;
+    height: 100%;
+}
+
+.quiz-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1.5rem 0 rgba(58, 59, 69, 0.2);
+}
+
+.quiz-card .card-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.quiz-card .btn {
+    margin-top: auto;
+    background-color: var(--primary-color);
+    border: none;
+}
+
+.quiz-card .btn:hover {
+    background-color: var(--accent-color);
+}
+
+.page-header {
+    border-bottom: 1px solid #e3e6f0;
+    margin-bottom: 1.5rem;
+}
+
+.add-test-btn {
+    background-color: #1cc88a;
+    border: none;
+    font-weight: 600;
+}
+
+.add-test-btn:hover {
+    background-color: #17a673;
+}
+
+.section-title {
+    color: var(--primary-color);
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}

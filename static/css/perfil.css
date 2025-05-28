@@ -1,0 +1,163 @@
+:root {
+    --primary-color: #4e73df;
+    --secondary-color: #f8f9fc;
+    --accent-color: #2e59d9;
+}
+
+.navbar {
+    background-color: var(--primary-color);
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+.navbar-brand {
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: white !important;
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+}
+
+.nav-link:hover {
+    color: white !important;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    height: 100%;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: var(--azul-claro);
+}
+
+.navbar {
+    background-color: var(--primary-color);
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+.navbar-brand {
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: white !important;
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+}
+
+.nav-link:hover {
+    color: white !important;
+}
+
+.container {
+    display: flex;
+    /* flex-direction: column; */
+    height: 100%;
+}
+
+.tab-btn {
+    background-color: var(--azul-escuro);
+    color: var(--branco);
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s;
+}
+
+.tab-btn:hover {
+    transform: scale(1.1);
+    background-color: var(--amarelo);
+    color: var(--azul-escuro);
+}
+
+.tab-btn.active {
+    background-color: var(--amarelo);
+    color: var(--azul-escuro);
+}
+
+main {
+    flex: 1;
+    padding: 30px;
+    background-color: var(--branco);
+    overflow-y: auto;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+button {
+    background-color: var(--azul-escuro);
+    color: var(--branco);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s;
+    margin-top: 15px;
+}
+
+button:hover {
+    transform: scale(1.1);
+    background-color: var(--amarelo);
+    color: var(--azul-escuro);
+}
+
+.info-card {
+    background-color: var(--azul-claro);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    color: var(--branco);
+    max-width: 800px;
+    margin: auto;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+.info-item {
+    flex: 1 1 45%;
+    margin: 10px 0;
+}
+
+.info-label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+    font-size: 1.1em;
+}
+
+.info-value {
+    font-size: 1em;
+}
+
+.bio {
+    margin-top: 20px;
+}
+
+.bio p {
+    margin-top: 5px;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 12px;
+    border-radius: 8px;
+}

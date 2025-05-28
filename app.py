@@ -3,7 +3,7 @@ from flask.templating import TemplateNotFound
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt
 from datetime import timedelta
 
 # from cadastro_usuario.rotas_cad_user import cad_user_bp
@@ -20,8 +20,8 @@ app = Flask(__name__, template_folder='templates')
 
 # app.register_blueprint(cad_user_bp, url_prefix='/usuario')  # Registra o blueprint com o prefixo /usuario
 
-# DB_HOST = "192.168.192.45"  # Altere conforme necessário
-DB_HOST = "192.168.1.3"  
+DB_HOST = "192.168.192.45"  # Altere conforme necessário
+# DB_HOST = "192.168.1.3"  
 DB_NAME = "pyquiz"  # Nome do banco de dados
 DB_USER = "postgres"  # Usuário do banco
 DB_PASSWORD = "a11anl3tciaem4nue11"  # Senha do banco
@@ -30,8 +30,8 @@ DB_PASSWORD = "a11anl3tciaem4nue11"  # Senha do banco
 # Cadastro de banco com SQLAlchemy
 # Configura o banco (pode ser SQLite, PostgreSQL, etc)
 
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.192.45:5432/pyquiz'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.1.3:5432/pyquiz'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.192.45:5432/pyquiz'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.1.3:5432/pyquiz'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Inicializa o SQLAlchemy com o app
@@ -44,7 +44,7 @@ class Usuario(db.Model):
     id_nome = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(255))
-    senha_hash = db.Column(db.String(128))
+    senha_hash = db.Column(db.String(255))
     autonomia = db.Column(db.String(20), default='user')  # 'Comum' ou 'Admin'
 
 class Quiz_nome(db.Model):
@@ -141,7 +141,7 @@ def cad_usuario():
         email = request.form.get("email")
         telefone = request.form.get("telefone")
         senha = request.form.get("senha")
-
+        
         senha_hash = generate_password_hash(senha)
         
         # print(request.form)
@@ -170,7 +170,14 @@ def cad_usuario():
         except Exception as e:
             return f"Erro ao cadastrar usuário: {e}"
         
-        
+
+@app.route('/perfil')
+def perfil():
+    return render_template("perfil.html")
+
+    
+
+
 @app.route('/criar_quiz')
 def criar_quiz():
     return render_template("quiz_maker.html")

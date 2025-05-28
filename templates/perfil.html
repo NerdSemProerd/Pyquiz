@@ -9,12 +9,8 @@
     <!-- Font Awesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/perfil.css') }}">
-    <style>
-        
-    </style>
 </head>
 <body>
-    <!-- Cabeçalho/Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark mb-4">
         <div class="container">
             <a class="navbar-brand" href="#">
@@ -43,51 +39,48 @@
     </nav>
 
     <div class="container">
-        <nav>
-            <button class="tab-btn active" onclick="showTab('info')">Informações</button>
-            <button class="tab-btn" onclick="showTab('settings')">Configurações</button>
-            <button class="tab-btn" onclick="showTab('activity')">Atividades</button>
+        <nav class="config-nav">
+            <button class="tab-btn active" onclick="showTab('info', event)">Informações</button>
+            <button class="tab-btn" onclick="showTab('settings', event)">Configurações</button>
+            <button class="tab-btn" onclick="showTab('activity', event)">Atividades</button>
         </nav>
         <main>
-            <!-- Aba: Informações Pessoais -->
             <section id="info" class="tab-content active">
                 <h2>Informações Pessoais</h2>
                 <div class="info-card">
                     <div class="info-row">
                         <div class="info-item">
                             <span class="info-label">👤 Nome:</span>
-                            <span class="info-value">Allan Santos</span>
+                            <span class="info-value" id="user-name">Carregando...</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">📧 Email:</span>
-                            <span class="info-value">allan@email.com</span>
+                            <span class="info-value" id="user-email">Carregando...</span>
                         </div>
                     </div>
                     <div class="info-row">
                         <div class="info-item">
                             <span class="info-label">🎂 Idade:</span>
-                            <span class="info-value">25 anos</span>
+                            <span class="info-value" id="user-age">Carregando...</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">📍 Localização:</span>
-                            <span class="info-value">Cascavel - PR</span>
+                            <span class="info-value" id="user-location">Carregando...</span>
                         </div>
                     </div>
                     <div class="bio">
                         <span class="info-label">📝 Biografia:</span>
-                        <p class="info-value">Estudante de TADS apaixonado por tecnologia, inovação e resolver problemas com código.</p>
+                        <p class="info-value" id="user-bio">Carregando...</p>
                     </div>
                 </div>
             </section>
 
-            <!-- Aba: Configurações -->
             <section id="settings" class="tab-content">
                 <h2>Configurações</h2>
                 <p>Aqui você poderá alterar suas preferências futuramente.</p>
                 <button>Editar Perfil</button>
             </section>
 
-            <!-- Aba: Atividades -->
             <section id="activity" class="tab-content">
                 <h2>Atividades Recentes</h2>
                 <ul>
@@ -99,8 +92,13 @@
         </main>
     </div>
 
-    <!-- Bootstrap JS -->
+    <!-- Dados injetados via Flask -->
+
+
+    <!-- Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JavaScript separado -->
     <script src="{{ url_for('static', filename='js/perfil.js') }}"></script>
 </body>
 </html>

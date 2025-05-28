@@ -11,8 +11,10 @@ import os
 import psycopg2
 
 
+app.config['SECRET_KEY'] = 'your_secret_key_here'  # Substitua pela sua chave secreta
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)  # Define o tempo de expiração do token JWT
 
-
+jwt = JWTManager(app)  # Inicializa o gerenciador de JWT
 
 # os.chdir(r'D:\\Faculdade\\REPs\\Pyquiz')
 print("Diretório atual:", os.getcwd())
@@ -20,8 +22,8 @@ app = Flask(__name__, template_folder='templates')
 
 # app.register_blueprint(cad_user_bp, url_prefix='/usuario')  # Registra o blueprint com o prefixo /usuario
 
-DB_HOST = "192.168.192.45"  # Altere conforme necessário
-# DB_HOST = "192.168.1.3"  
+# DB_HOST = "192.168.192.45"  # Altere conforme necessário
+DB_HOST = "192.168.1.3"  
 DB_NAME = "pyquiz"  # Nome do banco de dados
 DB_USER = "postgres"  # Usuário do banco
 DB_PASSWORD = "a11anl3tciaem4nue11"  # Senha do banco
@@ -30,8 +32,8 @@ DB_PASSWORD = "a11anl3tciaem4nue11"  # Senha do banco
 # Cadastro de banco com SQLAlchemy
 # Configura o banco (pode ser SQLite, PostgreSQL, etc)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.192.45:5432/pyquiz'
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.1.3:5432/pyquiz'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.192.45:5432/pyquiz'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.1.3:5432/pyquiz'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Inicializa o SQLAlchemy com o app
@@ -115,7 +117,6 @@ def login():
             "email": cred_usuario.email,
             "autonomia": cred_usuario.autonomia  # se tiver permissões
         },
-        expires_delta=timedelta(hours=1)  # Token expira em 1 hora
     )
 
     return jsonify({
@@ -174,6 +175,29 @@ def cad_usuario():
 @app.route('/perfil')
 def perfil():
     return render_template("perfil.html")
+
+
+@app.route('/carregar/perfil')
+def carregar_perfil():
+    try:
+        # Obtém o ID do usuário do token JWT
+        user_id = get_jwt()['sub']
+        
+        # Busca o usuário no banco de dados
+        usuario = Usuario.query.get(user_id)
+        
+        if not usuario:
+            return jsonify({'message': 'Usuário não encontrado'}), 404
+        
+        # Retorna os dados do usuário
+        return jsonify({
+            'id': usuario.id_nome,
+            'nome': usuario.nome,
+            'email': usuario.email,
+            'autonomia': usuario.autonomia
+        })
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
 
     
 

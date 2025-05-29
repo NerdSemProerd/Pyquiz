@@ -3,7 +3,7 @@ from flask.templating import TemplateNotFound
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt, JWTManager
 from datetime import timedelta
 
 # from cadastro_usuario.rotas_cad_user import cad_user_bp
@@ -11,10 +11,7 @@ import os
 import psycopg2
 
 
-app.config['SECRET_KEY'] = 'your_secret_key_here'  # Substitua pela sua chave secreta
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)  # Define o tempo de expiração do token JWT
 
-jwt = JWTManager(app)  # Inicializa o gerenciador de JWT
 
 # os.chdir(r'D:\\Faculdade\\REPs\\Pyquiz')
 print("Diretório atual:", os.getcwd())
@@ -22,18 +19,24 @@ app = Flask(__name__, template_folder='templates')
 
 # app.register_blueprint(cad_user_bp, url_prefix='/usuario')  # Registra o blueprint com o prefixo /usuario
 
-# DB_HOST = "192.168.192.45"  # Altere conforme necessário
-DB_HOST = "192.168.1.3"  
+DB_HOST = "192.168.192.45"  # Altere conforme necessário
+# DB_HOST = "192.168.1.3"  
 DB_NAME = "pyquiz"  # Nome do banco de dados
 DB_USER = "postgres"  # Usuário do banco
 DB_PASSWORD = "a11anl3tciaem4nue11"  # Senha do banco
 
 
+
+app.config['SECRET_KEY'] = 'super_senha_secreta123'  # Substitua pela sua chave secreta
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)  # Define o tempo de expiração do token JWT
+
+jwt = JWTManager(app)  # Inicializa o gerenciador de JWT
+
 # Cadastro de banco com SQLAlchemy
 # Configura o banco (pode ser SQLite, PostgreSQL, etc)
 
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.192.45:5432/pyquiz'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.1.3:5432/pyquiz'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.192.45:5432/pyquiz'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.1.3:5432/pyquiz'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Inicializa o SQLAlchemy com o app
@@ -43,7 +46,7 @@ db = SQLAlchemy(app)
 class Usuario(db.Model):
     __tablename__ = 'usuarios'
 
-    id_nome = db.Column(db.Integer, primary_key=True)
+    id_usuario = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(255))
     senha_hash = db.Column(db.String(255))
@@ -108,10 +111,9 @@ def login():
         if not cred_usuario or not check_password_hash(cred_usuario.senha_hash, j_password):
             return jsonify({'message': 'Email ou senha incorretos!'}), 401
     if cred_usuario and check_password_hash(cred_usuario.senha_hash, j_password):
-        return jsonify({'message': 'Login realizado com sucesso!'}), 200
-
-    token = create_access_token(
-        identity=cred_usuario.id,  # Identificador principal (obrigatório)
+    
+        token = create_access_token(
+        identity=cred_usuario.id_usuario,  # Identificador principal (obrigatório)
         additional_claims={  # Dados extras que você quer incluir
             "nome": cred_usuario.nome,
             "email": cred_usuario.email,
@@ -119,12 +121,12 @@ def login():
         },
     )
 
-    return jsonify({
-        "access_token": token,
-        "user_id": cred_usuario.id,
-        "nome": cred_usuario.nome,  # Dados extras para o frontend (opcional)
-        "autonomia": cred_usuario.autonomia
-    })
+        return jsonify({
+            "access_token": token,
+            "user_id": cred_usuario.id_usuario,
+            "nome": cred_usuario.nome,  # Dados extras para o frontend (opcional)
+            "autonomia": cred_usuario.autonomia
+        })
 
 
 @app.route("/form_cad_usuario")  
@@ -191,7 +193,7 @@ def carregar_perfil():
         
         # Retorna os dados do usuário
         return jsonify({
-            'id': usuario.id_nome,
+            'id': usuario.id_usuario,
             'nome': usuario.nome,
             'email': usuario.email,
             'autonomia': usuario.autonomia

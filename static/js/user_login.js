@@ -25,7 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
             });
 
+            const data = await response.json();
+
             if (response.ok) {
+                localStorage.setItem('token', data.access_token);
+                console.log("Aqui o token",  data.access_token)
                 window.location.href = '/';
             } else {
                 switch (response.status) {
@@ -41,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         showError('Email ou senha incorretos.');
                         break;
                     case 500:
-                        showError('Erro interno do servidor. Tente novamente mais tarde.');
+                        showError('Erro interno do servidor. Tente novamente mais tarde. Verifique os log do servidor');
                         break;
                     default:
                         showError('Erro desconhecido. Tente novamente.');

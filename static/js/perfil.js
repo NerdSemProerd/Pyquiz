@@ -16,18 +16,14 @@ async function carregarPerfil() {
     const dados = await resposta.json();
 
     // Aqui você preenche os campos com os dados recebidos
-    document.querySelector('.info-value.nome').textContent = dados.nome;
-    document.querySelector('.info-value.email').textContent = dados.email;
-    document.querySelector('.info-value.idade').textContent = dados.idade + ' anos';
-    document.querySelector('.info-value.localizacao').textContent = dados.localizacao;
-    document.querySelector('.info-value.biografia').textContent = dados.biografia;
+    document.getElementById('user-name').textContent = dados.nome;
+    document.getElementById('user-email').textContent = dados.email;
+    document.getElementById('user-age').textContent = dados.idade + ' anos';
+    document.getElementById('user-location').textContent = dados.localizacao;
+    document.getElementById('user-bio').textContent = dados.biografia;
 
-    // Esconde "Carregando..." e mostra o conteúdo
-    document.getElementById('carregando').style.display = 'none';
-    document.getElementById('conteudo').style.display = 'block';
   } catch (erro) {
     console.error('Erro ao carregar perfil:', erro);
-    document.getElementById('carregando').textContent = 'Erro ao carregar perfil.';
   }
 }
 

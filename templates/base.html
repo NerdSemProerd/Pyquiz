@@ -25,15 +25,21 @@
                     <li class="nav-item">
                         <a class="nav-link active" href="#"><i class="fas fa-home me-1"></i> Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('perfil') }}"><i class="fas fa-user me-1"></i> Perfil</a>
+                    {% if usuario %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                            {{ usuario.nome }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{{ url_for('perfil') }}">Perfil</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">Sair</a></li>
+                        </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-chart-bar me-1"></i> Resultados</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('user_login') }}"><i class="fas fa-sign-in-alt me-1"></i> Login</a>
-                    </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('user_login') }}"><i class="fas fa-sign-in-alt me-1"></i> Login</a>
+                        </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>

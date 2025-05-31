@@ -22,17 +22,23 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-home me-1"></i> Home</a>
+                        <a class="nav-link active" href="#"><i class="fas fa-home me-1"></i> Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ url_for('perfil') }}"><i class="fas fa-user me-1"></i> Perfil</a>
+                    {% if usuario %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                            {{ usuario.nome }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{{ url_for('perfil') }}">Perfil</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">Sair</a></li>
+                        </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-chart-bar me-1"></i> Resultados</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('user_login') }}"><i class="fas fa-sign-in-alt me-1"></i> Login</a>
-                    </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('user_login') }}"><i class="fas fa-sign-in-alt me-1"></i> Login</a>
+                        </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
@@ -51,26 +57,26 @@
                     <div class="info-row">
                         <div class="info-item">
                             <span class="info-label">👤 Nome:</span>
-                            <span class="info-value" id="user-name">Carregando...</span>
+                            <span class="info-value" id="user-name">Não informado...</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">📧 Email:</span>
-                            <span class="info-value" id="user-email">Carregando...</span>
+                            <span class="info-value" id="user-email">Não informado...</span>
                         </div>
                     </div>
                     <div class="info-row">
                         <div class="info-item">
                             <span class="info-label">🎂 Idade:</span>
-                            <span class="info-value" id="user-age">Carregando...</span>
+                            <span class="info-value" id="user-age">Não informado...</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">📍 Localização:</span>
-                            <span class="info-value" id="user-location">Carregando...</span>
+                            <span class="info-value" id="user-location">Não informado...</span>
                         </div>
                     </div>
                     <div class="bio">
                         <span class="info-label">📝 Biografia:</span>
-                        <p class="info-value" id="user-bio">Carregando...</p>
+                        <p class="info-value" id="user-bio">Não informado...</p>
                     </div>
                 </div>
             </section>

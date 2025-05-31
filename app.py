@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, request, redirect, url_for
+from flask import Flask, jsonify, render_template, request, redirect, url_for, session
 from flask.templating import TemplateNotFound
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
@@ -16,7 +16,8 @@ import psycopg2
 # os.chdir(r'D:\\Faculdade\\REPs\\Pyquiz')
 print("Diretório atual:", os.getcwd())
 app = Flask(__name__, template_folder='templates')
-
+app = Flask(__name__)
+app.secret_key = 'chave-muito-secreta'
 # app.register_blueprint(cad_user_bp, url_prefix='/usuario')  # Registra o blueprint com o prefixo /usuario
 
 DB_HOST = "192.168.192.45"  # Altere conforme necessário
@@ -85,7 +86,10 @@ class Questao_resposta(db.Model):
 
 @app.route("/")  
 def home():
-    return render_template("base.html")
+    usuario = None
+    if 'usuario_id' in session:
+        usuario = db.session.get(Usuario, session['usuario_id'])
+    return render_template("base.html", usuario=usuario)
 
 
 
@@ -93,9 +97,6 @@ def home():
 @app.route("/user_login")  
 def user_login():
     return render_template("user_login.html")
-
-
-
 
 
 @app.route("/login", methods=['POST'])
@@ -111,23 +112,14 @@ def login():
         if not cred_usuario or not check_password_hash(cred_usuario.senha_hash, j_password):
             return jsonify({'message': 'Email ou senha incorretos!'}), 401
     if cred_usuario and check_password_hash(cred_usuario.senha_hash, j_password):
-    
-        token = create_access_token(
-        identity=cred_usuario.id_usuario,  # Identificador principal (obrigatório)
-        additional_claims={  # Dados extras que você quer incluir
-            "nome": cred_usuario.nome,
-            "email": cred_usuario.email,
-            "autonomia": cred_usuario.autonomia  # se tiver permissões
-        },
-    )
+            
+        session['usuario_id'] = cred_usuario.id_usuario
+        return jsonify({'mensagem': 'Login realizado com sucesso'})
 
-        return jsonify({
-            "access_token": token,
-            "user_id": cred_usuario.id_usuario,
-            "nome": cred_usuario.nome,  # Dados extras para o frontend (opcional)
-            "autonomia": cred_usuario.autonomia
-        })
-
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('home'))
 
 @app.route("/form_cad_usuario")  
 def form_cad_usuario():
@@ -176,21 +168,22 @@ def cad_usuario():
 
 @app.route('/perfil')
 def perfil():
-    return render_template("perfil.html")
+    if 'usuario_id' not in session:
+        return redirect('/user_login')  # não logado
+    if 'usuario_id' in session:
+        usuario = db.session.get(Usuario, session['usuario_id'])
+    
+    return render_template("perfil.html", usuario=usuario)
 
 
 @app.route('/carregar/perfil')
 def carregar_perfil():
     try:
-        # Obtém o ID do usuário do token JWT
-        user_id = get_jwt()['sub']
+        usuario_id = session.get('usuario_id')
         
-        # Busca o usuário no banco de dados
-        usuario = Usuario.query.get(user_id)
-        
-        if not usuario:
+        if not usuario_id:
             return jsonify({'message': 'Usuário não encontrado'}), 404
-        
+        usuario = db.session.get(Usuario, session['usuario_id'])
         # Retorna os dados do usuário
         return jsonify({
             'id': usuario.id_usuario,

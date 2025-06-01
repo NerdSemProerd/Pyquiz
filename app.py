@@ -91,7 +91,10 @@ def home():
         usuario = db.session.get(Usuario, session['usuario_id'])
     return render_template("base.html", usuario=usuario)
 
-
+@app.route("/responda")  
+def responda():
+    usuario = db.session.get(Usuario, session['usuario_id'])
+    return render_template("responda.html", usuario=usuario)
 
 
 @app.route("/user_login")  
@@ -161,7 +164,7 @@ def cad_usuario():
 
             cur.close()
             conn.close()
-            return "Cadastro realizado com sucesso!"
+            return "Cadastro realizado com sucesso!" and redirect('/')
         except Exception as e:
             return f"Erro ao cadastrar usuário: {e}"
         

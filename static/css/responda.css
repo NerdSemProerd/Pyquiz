@@ -1,0 +1,138 @@
+:root {
+  --azul-claro: #dce4f7;
+  --azul-medio: #3256a8;
+  --azul-escuro: #1f3366;
+  --amarelo: #f9cb1f;
+  --branco: #ffffff;
+  --primary-color: #4e73df;
+  --secondary-color: #f8f9fc;
+  --accent-color: #2e59d9;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f5f7fa;
+  color: var(--azul-escuro);
+}
+.navbar {
+  background-color: var(--primary-color);
+  box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+.navbar-brand {
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: white !important;
+}
+
+.nav-link {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+}
+
+.nav-link:hover {
+  color: white !important;
+}
+/* Cabeçalho */
+.topo {
+  background-color: var(--azul-medio);
+  color: var(--branco);
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.menu a {
+  color: var(--branco);
+  text-decoration: none;
+  margin-left: 1.5rem;
+  font-weight: bold;
+}
+
+.menu a:hover {
+  text-decoration: underline;
+}
+
+/* Conteúdo Principal */
+main {
+  max-width: 700px;
+  margin: 2rem auto;
+  background-color: var(--branco);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+h1 {
+  color: var(--azul-escuro);
+  margin-bottom: 1.5rem;
+}
+
+#perguntaContainer {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+#opcoesContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.opcao {
+  background-color: var(--azul-medio);
+  color: var(--branco);
+  border: none;
+  padding: 1rem;
+  width: 100%;
+  max-width: 400px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.opcao:hover {
+  background-color: var(--azul-claro);
+  color: var(--azul-escuro);
+}
+
+.opcao.selecionada {
+  background-color: var(--amarelo);
+  color: var(--azul-escuro);
+}
+
+#proximaBtn {
+  background-color: var(--amarelo);
+  color: var(--azul-escuro);
+  font-weight: bold;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#proximaBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+#resultadoFinal {
+  margin-top: 2rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--azul-medio);
+}
+

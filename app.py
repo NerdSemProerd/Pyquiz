@@ -199,7 +199,11 @@ def carregar_perfil():
 
 @app.route('/criar_quiz')
 def criar_quiz():
-    return render_template("quiz_maker.html")
+    if 'usuario_id' not in session:
+        return redirect('/user_login')  # não logado
+    if 'usuario_id' in session:
+        usuario = db.session.get(Usuario, session['usuario_id'])
+    return render_template("quiz_maker.html", usuario=usuario)
 
 
 
@@ -209,6 +213,7 @@ def cad_quiz():
         json_data = request.get_json()
         salvar_quiz(json_data)
     return jsonify({'message': 'Quiz salvo com sucesso!'})
+
 def salvar_quiz(json_data):
     # 1. Cria o quiz
     novo_quiz = Quiz_nome(
@@ -236,6 +241,29 @@ def salvar_quiz(json_data):
             )
             db.session.add(nova_resposta)
     db.session.commit()
+
+
+@app.route('/api/quizzes')
+def get_quizzes():
+    try:
+        # Busca apenas nome e descrição dos quizzes
+        quizzes = Quiz_nome.query.with_entities(
+            Quiz_nome.id_quiz,
+            Quiz_nome.nome_quiz,
+            Quiz_nome.descricao_quiz
+        ).all()
+        
+        # Formata os dados para JSON
+        quizzes_data = [{
+            'id': quiz.id_quiz,
+            'nome': quiz.nome_quiz,
+            'descricao': quiz.descricao_quiz
+        } for quiz in quizzes]
+        
+        return jsonify(quizzes_data)
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => { // Espera o DOM carregar antes de executar o script, evitando erros de elementos não encontrados
+document.addEventListener('DOMContentLoaded', () => {
     // Elementos da UI
     const backButton = document.getElementById('back-button');
     const questionsContainer = document.getElementById('questions-container');
@@ -68,10 +68,10 @@ document.addEventListener('DOMContentLoaded', () => { // Espera o DOM carregar a
             const answerHTML = `
             <div class="answer-item row g-2 mb-2 align-items-center">
                 <div class="col-md-7">
-                    <input type="text" class="form-control answer-text" placeholder="Texto da resposta" required>
+                    <input type="text" class="form-control answer-text" placeholder="Texto da resposta" required minlength="1">
                 </div>
                 <div class="col-md-3">
-                    <input type="number" class="form-control answer-points" placeholder="Pontuação" step="0.1" min="0">
+                    <input type="number" class="form-control answer-points" placeholder="Pontuação" step="0.1" min="0" required>
                 </div>
                 <div class="col-md-2">
                     <button type="button" class="btn btn-sm btn-outline-danger delete-answer">×</button>
@@ -97,8 +97,71 @@ document.addEventListener('DOMContentLoaded', () => { // Espera o DOM carregar a
         });
     }
 
+    // Função para validar o quiz antes de salvar
+    function validarQuiz() {
+        let isValid = true;
+        
+        // Resetar estilos de erro
+        document.querySelectorAll('.form-control').forEach(el => {
+            el.classList.remove('is-invalid');
+        });
+        
+        // Validar nome do quiz
+        const quizName = document.getElementById('quiz-name');
+        if (!quizName.value.trim()) {
+            quizName.classList.add('is-invalid');
+            isValid = false;
+        }
+        
+        // Validar questões
+        const questionCards = document.querySelectorAll('.question-card');
+        if (questionCards.length === 0) {
+            alert('Adicione pelo menos uma questão ao quiz!');
+            return false;
+        }
+        
+        questionCards.forEach((question, index) => {
+            const questionText = question.querySelector('.question-text');
+            const answers = question.querySelectorAll('.answer-item');
+            
+            // Validar texto da questão
+            if (!questionText.value.trim()) {
+                questionText.classList.add('is-invalid');
+                isValid = false;
+            }
+            
+            // Validar que há pelo menos uma resposta
+            if (answers.length === 0) {
+                alert(`A questão ${index + 1} precisa ter pelo menos uma resposta!`);
+                isValid = false;
+            }
+            
+            // Validar cada resposta
+            answers.forEach(answer => {
+                const answerText = answer.querySelector('.answer-text');
+                const answerPoints = answer.querySelector('.answer-points');
+                
+                if (!answerText.value.trim()) {
+                    answerText.classList.add('is-invalid');
+                    isValid = false;
+                }
+                
+                if (!answerPoints.value.trim() || isNaN(parseFloat(answerPoints.value))) {
+                    answerPoints.classList.add('is-invalid');
+                    isValid = false;
+                }
+            });
+        });
+        
+        return isValid;
+    }
+
     // Salvar quiz
     saveQuizBtn.addEventListener('click', () => {
+        if (!validarQuiz()) {
+            return; // Não continua se a validação falhar
+        }
+        
         const quizData = {
             name: document.getElementById('quiz-name').value,
             description: document.getElementById('quiz-description').value,
@@ -122,27 +185,23 @@ document.addEventListener('DOMContentLoaded', () => { // Espera o DOM carregar a
         });
 
         console.log('Dados do Quiz:', quizData);
-        // Aqui você faria a requisição para o Flask
         
         fetch('/salvar_quiz', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json' // Dizendo que estamos mandando JSON
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify(quizData) // Convertendo o objeto em texto JSON
+            body: JSON.stringify(quizData)
         })
-        .then(response => response.json()) // Espera resposta do Flask
+        .then(response => response.json())
         .then(data => {
             console.log('Quiz salvo com sucesso!', data);
-            // Aqui você pode redirecionar ou mostrar um alerta
+            alert('Quiz salvo com sucesso!');
+            window.location.href = '/';
         })
         .catch(error => {
             console.error('Erro ao salvar quiz:', error);
+            alert('Erro ao salvar o quiz. Por favor, tente novamente.');
         });
-        
     });
-
-    // Simulação do usuário logado (remova quando implementar)
-    document.getElementById('username').textContent = 'Nome do Usuário';
-    document.getElementById('profile-pic').textContent = 'NU';
 });

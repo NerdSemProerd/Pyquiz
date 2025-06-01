@@ -49,120 +49,21 @@
     <div class="container">
         <header class="page-header py-3">
             <div class="d-flex justify-content-between align-items-center">
-                <h1 class="section-title">TESTES MAIS ACESSADOS</h1>
+                <h1 class="section-title">TESTES DISPONIVEIS</h1>
                 <a href="{{ url_for('criar_quiz') }}" class="btn add-test-btn">
                     <i class="fas fa-plus me-1"></i> ADICIONE SEU TESTE
                 </a>
             </div>
         </header>
 
-        <div class="row g-4">
-            <!-- Card 1 -->
-            <div class="col-md-6 col-lg-3">
-                <div class="card quiz-card">
-                    <img src="https://via.placeholder.com/300x150?text=Quiz+Personality" class="card-img-top" alt="Quiz Personalidade">
-                    <div class="card-body">
-                        <h5 class="card-title">Qual pista você seria de acordo com a sua personalidade?</h5>
-                        <p class="card-text text-muted">Descubra qual pista combina mais com seu jeito de ser</p>
-                        <a href="#" class="btn btn-primary">Fazer teste</a>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Card 2 -->
-            <div class="col-md-6 col-lg-3">
-                <div class="card quiz-card">
-                    <img src="https://via.placeholder.com/300x150?text=São+Paulo+FC" class="card-img-top" alt="São Paulo FC">
-                    <div class="card-body">
-                        <h5 class="card-title">Quanto você sabe sobre o São Paulo Futebol Clube?</h5>
-                        <p class="card-text text-muted">Teste seus conhecimentos sobre o tricolor paulista</p>
-                        <a href="#" class="btn btn-primary">Fazer teste</a>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Card 3 -->
-            <div class="col-md-6 col-lg-3">
-                <div class="card quiz-card">
-                    <img src="https://via.placeholder.com/300x150?text=Naruto" class="card-img-top" alt="Naruto">
-                    <div class="card-body">
-                        <h5 class="card-title">Qual personagem de Naruto você seria?</h5>
-                        <p class="card-text text-muted">Descubra com qual ninja você mais se identifica</p>
-                        <a href="#" class="btn btn-primary">Fazer teste</a>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Card 4 -->
-            <div class="col-md-6 col-lg-3">
-                <div class="card quiz-card">
-                    <img src="https://via.placeholder.com/300x150?text=Harry+Potter" class="card-img-top" alt="Harry Potter">
-                    <div class="card-body">
-                        <h5 class="card-title">Qual sua casa de Hogwarts?</h5>
-                        <p class="card-text text-muted">O chapéu seletor vai decidir seu destino!</p>
-                        <a href="#" class="btn btn-primary">Fazer teste</a>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Card 5 -->
-            <div class="col-md-6 col-lg-3">
-                <div class="card quiz-card">
-                    <img src="https://via.placeholder.com/300x150?text=Python" class="card-img-top" alt="Python">
-                    <div class="card-body">
-                        <h5 class="card-title">O quanto você sabe sobre Python?</h5>
-                        <p class="card-text text-muted">Teste seus conhecimentos sobre a linguagem</p>
-                        <a href="#" class="btn btn-primary">Fazer teste</a>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Card 6 -->
-            <div class="col-md-6 col-lg-3">
-                <div class="card quiz-card">
-                    <img src="https://via.placeholder.com/300x150?text=Chevrolet" class="card-img-top" alt="Chevrolet">
-                    <div class="card-body">
-                        <h5 class="card-title">Teste seus conhecimentos sobre a Chevrolet!</h5>
-                        <p class="card-text text-muted">Quanto você sabe sobre a marca de carros?</p>
-                        <a href="#" class="btn btn-primary">Fazer teste</a>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Card 7 -->
-            <div class="col-md-6 col-lg-3">
-                <div class="card quiz-card">
-                    <img src="https://via.placeholder.com/300x150?text=Cursos" class="card-img-top" alt="Cursos">
-                    <div class="card-body">
-                        <h5 class="card-title">Qual curso mais combina com você?</h5>
-                        <p class="card-text text-muted">Descubra qual área do conhecimento é sua cara</p>
-                        <a href="#" class="btn btn-primary">Fazer teste</a>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Card 8 -->
-            <div class="col-md-6 col-lg-3">
-                <div class="card quiz-card">
-                    <img src="https://via.placeholder.com/300x150?text=BTS" class="card-img-top" alt="BTS">
-                    <div class="card-body">
-                        <h5 class="card-title">Qual membro do BTS você seria?</h5>
-                        <p class="card-text text-muted">Descubra com qual integrante você mais se parece</p>
-                        <a href="#" class="btn btn-primary">Fazer teste</a>
-                    </div>
+        <div class="row g-4" id="quizzes-container">
+            <!-- Os quizzes serão carregados aqui dinamicamente via JavaScript -->
+            <div class="col-12 text-center py-5">
+                <div class="spinner-border text-primary" role="status" id="loading-spinner">
+                    <span class="visually-hidden">Carregando...</span>
                 </div>
             </div>
         </div>
-        
-        <!-- Seção de Resultados -->
-        <div class="text-center mt-5 mb-4">
-            <h2 class="section-title">VEJA SEUS RESULTADOS!</h2>
-            <p class="lead">Acompanhe seu desempenho nos testes que você já realizou</p>
-            <a href="#" class="btn btn-primary btn-lg">
-                <i class="fas fa-chart-bar me-2"></i> Ver Resultados
-            </a>
-        </div>
-    </div>
 
     <!-- Rodapé -->
     <footer class="bg-light py-4 mt-5">
@@ -179,5 +80,6 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/base.js') }}"></script>
 </body>
 </html>

@@ -1,79 +1,75 @@
-const perguntas = [
-  {
-    pergunta: "Qual a capital da França?",
-    opcoes: ["Paris", "Londres", "Roma", "Berlim"],
-    resposta: "Paris"
-  },
-  {
-    pergunta: "Qual o rio mais longo do mundo?",
-    opcoes: ["Nilo", "Amazonas", "Yangtzé", "Mississipi"],
-    resposta: "Amazonas"
-  },
-  {
-    pergunta: "Em que continente fica o Egito?",
-    opcoes: ["África", "Ásia", "Europa", "América"],
-    resposta: "África"
-  },
-  {
-    pergunta: "Quanto é 2 + 2?",
-    opcoes: ["3", "4", "5", "6"],
-    resposta: "4"
-  }
-];
+document.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const quizId = urlParams.get('quiz_id') || document.getElementById('quizId').value;
+  
+  fetch(`/api/quiz/${quizId}`)
+      .then(response => response.json())
+      .then(data => iniciarQuiz(data))
+      .catch(error => console.error('Erro ao carregar quiz:', error));
+});
 
-let perguntaAtual = 0;
-let pontuacao = 0;
-let respostaSelecionada = null;
+function iniciarQuiz(quizData) {
+  const perguntas = quizData.perguntas.map(pergunta => ({
+      pergunta: pergunta.pergunta,
+      opcoes: pergunta.opcoes.map(opcao => opcao.texto),
+      resposta: pergunta.resposta
+  }));
 
-const perguntaContainer = document.getElementById("perguntaContainer");
-const opcoesContainer = document.getElementById("opcoesContainer");
-const proximaBtn = document.getElementById("proximaBtn");
-const resultadoFinal = document.getElementById("resultadoFinal");
+  let perguntaAtual = 0;
+  let pontuacao = 0;
+  let respostaSelecionada = null;
 
-function carregarPergunta() {
-  const perguntaObj = perguntas[perguntaAtual];
-  perguntaContainer.innerHTML = `<h2>${perguntaObj.pergunta}</h2>`;
-  opcoesContainer.innerHTML = "";
-  proximaBtn.disabled = true;
-  respostaSelecionada = null;
+  const perguntaContainer = document.getElementById("perguntaContainer");
+  const opcoesContainer = document.getElementById("opcoesContainer");
+  const proximaBtn = document.getElementById("proximaBtn");
+  const resultadoFinal = document.getElementById("resultadoFinal");
 
-  perguntaObj.opcoes.forEach(opcao => {
-    const btn = document.createElement("button");
-    btn.innerText = opcao;
-    btn.classList.add("opcao");
-    btn.onclick = () => selecionarResposta(btn, opcao);
-    opcoesContainer.appendChild(btn);
-  });
-}
+  function carregarPergunta() {
+      const perguntaObj = perguntas[perguntaAtual];
+      perguntaContainer.innerHTML = `<h2>${perguntaObj.pergunta}</h2>`;
+      opcoesContainer.innerHTML = "";
+      proximaBtn.disabled = true;
+      respostaSelecionada = null;
 
-function selecionarResposta(botao, resposta) {
-  document.querySelectorAll(".opcao").forEach(btn => btn.classList.remove("selecionada"));
-  botao.classList.add("selecionada");
-  respostaSelecionada = resposta;
-  proximaBtn.disabled = false;
-}
-
-proximaBtn.onclick = () => {
-  if (respostaSelecionada === perguntas[perguntaAtual].resposta) {
-    pontuacao++;
+      perguntaObj.opcoes.forEach(opcao => {
+          const btn = document.createElement("button");
+          btn.innerText = opcao;
+          btn.classList.add("opcao");
+          btn.onclick = () => selecionarResposta(btn, opcao);
+          opcoesContainer.appendChild(btn);
+      });
   }
 
-  perguntaAtual++;
-
-  if (perguntaAtual < perguntas.length) {
-    carregarPergunta();
-  } else {
-    mostrarResultado();
+  function selecionarResposta(botao, resposta) {
+      document.querySelectorAll(".opcao").forEach(btn => btn.classList.remove("selecionada"));
+      botao.classList.add("selecionada");
+      respostaSelecionada = resposta;
+      proximaBtn.disabled = false;
   }
-};
 
-function mostrarResultado() {
-  document.getElementById("quizContainer").style.display = "none";
-  resultadoFinal.style.display = "block";
-  resultadoFinal.innerHTML = `
-    <h2>Quiz Finalizado!</h2>
-    <p>Sua pontuação: ${pontuacao} de ${perguntas.length}</p>
-  `;
+  proximaBtn.onclick = () => {
+      if (respostaSelecionada === perguntas[perguntaAtual].resposta) {
+          pontuacao++;
+      }
+
+      perguntaAtual++;
+
+      if (perguntaAtual < perguntas.length) {
+          carregarPergunta();
+      } else {
+          mostrarResultado();
+      }
+  };
+
+  function mostrarResultado() {
+      document.getElementById("quizContainer").style.display = "none";
+      resultadoFinal.style.display = "block";
+      resultadoFinal.innerHTML = `
+          <h2>Quiz Finalizado!</h2>
+          <p>Sua pontuação: ${pontuacao} de ${perguntas.length}</p>
+          <p>Quiz: ${quizData.nome}</p>
+      `;
+  }
+
+  carregarPergunta();
 }
-
-carregarPergunta();

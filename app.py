@@ -3,7 +3,6 @@ from flask.templating import TemplateNotFound
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt, JWTManager
 from datetime import timedelta
 
 # from cadastro_usuario.rotas_cad_user import cad_user_bp
@@ -30,8 +29,6 @@ DB_PASSWORD = "a11anl3tciaem4nue11"  # Senha do banco
 
 app.config['SECRET_KEY'] = 'super_senha_secreta123'  # Substitua pela sua chave secreta
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)  # Define o tempo de expiração do token JWT
-
-jwt = JWTManager(app)  # Inicializa o gerenciador de JWT
 
 # Cadastro de banco com SQLAlchemy
 # Configura o banco (pode ser SQLite, PostgreSQL, etc)
@@ -91,13 +88,6 @@ def home():
         usuario = db.session.get(Usuario, session['usuario_id'])
     return render_template("base.html", usuario=usuario)
 
-@app.route("/responda")  
-def responda():
-    if 'usuario_id' not in session:
-        return redirect('/user_login')  # não logado
-    if 'usuario_id' in session:
-        usuario = db.session.get(Usuario, session['usuario_id'])
-    return render_template("responda.html", usuario=usuario)
 
 
 @app.route("/user_login")  
@@ -270,6 +260,65 @@ def get_quizzes():
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+# @app.route("/responda")  
+# def responda():
+#     if 'usuario_id' not in session:
+#         return redirect('/user_login')  # não logado
+#     if 'usuario_id' in session:
+#         usuario = db.session.get(Usuario, session['usuario_id'])
+#     return render_template("responda.html", usuario=usuario)
+
+@app.route('/api/quiz/<int:quiz_id>')
+def get_quiz_questions(quiz_id):
+    try:
+        # Busca o quiz e suas questões com respostas
+        quiz = Quiz_nome.query.get_or_404(quiz_id)
+        
+        # Formata os dados para JSON
+        quiz_data = {
+            'id': quiz.id_quiz,
+            'nome': quiz.nome_quiz,
+            'descricao': quiz.descricao_quiz,
+            'perguntas': []
+        }
+        
+        for questao in quiz.questoes:
+            questao_data = {
+                'id': questao.id_questao,
+                'pergunta': questao.questao,
+                'opcoes': [],
+                'resposta': None
+            }
+            
+            for resposta in questao.respostas:
+                opcao = {
+                    'texto': resposta.resposta,
+                    'pontuacao': resposta.pontuacao
+                }
+                questao_data['opcoes'].append(opcao)
+                
+                # Assumindo que a resposta correta é a com maior pontuação
+                if resposta.pontuacao == 1.0:  # ou qualquer lógica que determine a resposta correta
+                    questao_data['resposta'] = resposta.resposta
+            
+            quiz_data['perguntas'].append(questao_data)
+        
+        return jsonify(quiz_data)
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+
+@app.route("/responda/<int:quiz_id>")  
+def responda(quiz_id):
+    if 'usuario_id' not in session:
+        return redirect('/user_login')  # não logado
+    
+    usuario = db.session.get(Usuario, session['usuario_id'])
+    return render_template("responda.html", usuario=usuario, quiz_id=quiz_id)
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)

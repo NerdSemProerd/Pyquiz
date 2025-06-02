@@ -42,16 +42,16 @@
     </div>
 </nav>
 
-  <main>
+<main>
     <h1>Quiz Interativo</h1>
+    <input type="hidden" id="quizId" value="{{ quiz_id }}">
     <div id="quizContainer">
-      <div id="perguntaContainer"></div>
-      <div id="opcoesContainer"></div>
-      <button id="proximaBtn" disabled>Próxima</button>
+        <div id="perguntaContainer"></div>
+        <div id="opcoesContainer"></div>
+        <button id="proximaBtn" disabled>Próxima</button>
     </div>
-
     <div id="resultadoFinal" style="display:none;"></div>
-  </main>
+</main>
 
   <script src="{{ url_for('static', filename='js/responda.js') }}"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

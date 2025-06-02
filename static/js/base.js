@@ -1,9 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const quizzesContainer = document.getElementById('quizzes-container');
     
-    // Função para carregar os quizzes
     function loadQuizzes() {
-        // Mostra loading
         quizzesContainer.innerHTML = `
             <div class="col-12 text-center py-5">
                 <div class="spinner-border text-primary" role="status">
@@ -12,17 +10,14 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
         
-        // Faz a requisição
         fetch('/api/quizzes')
             .then(response => {
                 if (!response.ok) throw new Error('Erro ao carregar quizzes');
                 return response.json();
             })
             .then(quizzes => {
-                // Limpa o container
                 quizzesContainer.innerHTML = '';
                 
-                // Se não houver quizzes
                 if (quizzes.length === 0) {
                     quizzesContainer.innerHTML = `
                         <div class="col-12 text-center py-5">
@@ -35,7 +30,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     return;
                 }
                 
-                // Cria os cards para cada quiz
                 quizzes.forEach(quiz => {
                     const quizCard = `
                         <div class="col-md-6 col-lg-3 mb-4">
@@ -45,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <p class="card-text text-muted flex-grow-1">
                                         ${quiz.descricao || 'Descrição não disponível'}
                                     </p>
-                                    <a href="/quiz/${quiz.id}" class="btn btn-primary mt-auto">
+                                    <a href="/responda/${quiz.id}" class="btn btn-primary mt-auto">
                                         Fazer teste
                                     </a>
                                 </div>
@@ -69,6 +63,5 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
     
-    // Carrega os quizzes quando a página abre
     loadQuizzes();
 });

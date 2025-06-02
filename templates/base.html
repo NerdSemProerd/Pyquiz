@@ -50,9 +50,11 @@
         <header class="page-header py-3">
             <div class="d-flex justify-content-between align-items-center">
                 <h1 class="section-title">TESTES DISPONIVEIS</h1>
+                {% if usuario %}
                 <a href="{{ url_for('criar_quiz') }}" class="btn add-test-btn">
                     <i class="fas fa-plus me-1"></i> ADICIONE SEU TESTE
                 </a>
+                {% endif %}
             </div>
         </header>
 

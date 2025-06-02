@@ -93,7 +93,10 @@ def home():
 
 @app.route("/responda")  
 def responda():
-    usuario = db.session.get(Usuario, session['usuario_id'])
+    if 'usuario_id' not in session:
+        return redirect('/user_login')  # não logado
+    if 'usuario_id' in session:
+        usuario = db.session.get(Usuario, session['usuario_id'])
     return render_template("responda.html", usuario=usuario)
 
 

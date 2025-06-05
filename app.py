@@ -130,7 +130,7 @@ def login():
         # Chamar a API de email local (opcional)
         try:
             resposta = requests.post(
-                "http://localhost:3000/enviar-email",
+                "http://54.146.138.101:3000/enviar-email",
                 json={
                     "nome": nome_completo,
                     "email": email

@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import timedelta
-# import requests
+import requests
 # from cadastro_usuario.rotas_cad_user import cad_user_bp
 import os
 import psycopg2
@@ -34,9 +34,9 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)  # Define o tempo de
 # Cadastro de banco com SQLAlchemy
 # Configura o banco (pode ser SQLite, PostgreSQL, etc)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:Univel123*marcos@pyquiz.cyb5mu8yf2kt.us-east-1.rds.amazonaws.com:5432/pyquiz'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:Univel123*marcos@pyquiz.cyb5mu8yf2kt.us-east-1.rds.amazonaws.com:5432/pyquiz'
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.192.45:5432/pyquiz'
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.1.3:5432/pyquiz'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.1.3:5432/pyquiz'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Inicializa o SQLAlchemy com o app
@@ -104,49 +104,58 @@ def user_login():
 
 @app.route("/login", methods=['POST'])
 def login():
-    j_data = request.get_json()
-    j_email = j_data.get('email')
-    j_password = j_data.get('password')
+    try:
+        j_data = request.get_json()
+        if not j_data:
+            return jsonify({'message': 'Dados de login não fornecidos'}), 400
+            
+        j_email = j_data.get('email')
+        j_password = j_data.get('password')
 
-    cred_usuario = Usuario.query.filter_by(email=j_email).first()
-    if not cred_usuario:
-        return jsonify({'message': 'Email não encontrado'}), 404
-    else:
+        if not j_email or not j_password:
+            return jsonify({'message': 'Email e senha são obrigatórios'}), 400
+
+        cred_usuario = Usuario.query.filter_by(email=j_email).first()
+        
+        # Verificação de credenciais
         if not cred_usuario or not check_password_hash(cred_usuario.senha_hash, j_password):
             return jsonify({'message': 'Email ou senha incorretos!'}), 401
-    if cred_usuario and check_password_hash(cred_usuario.senha_hash, j_password):
-            
+        
+        # Login bem-sucedido
         session['usuario_id'] = cred_usuario.id_usuario
-        return jsonify({'mensagem': 'Login realizado com sucesso'})
-    
+        
+        # Preparar dados para o email
+        nome_completo = f"{cred_usuario.nome} {cred_usuario.sobrenome}"
+        email = cred_usuario.email
+        
+        # Chamar a API de email local (opcional)
+        try:
+            resposta = requests.post(
+                "http://localhost:3000/enviar-email",
+                json={
+                    "nome": nome_completo,
+                    "email": email
+                },
+                timeout=3  # timeout de 3 segundos
+            )
+            
+            if resposta.status_code != 200:
+                print(f"AVISO: Email não enviado - {resposta.text}")
+        
+        except Exception as e:
+            print(f"AVISO: Serviço de email indisponível - {str(e)}")
+        
+        return jsonify({
+            'mensagem': 'Login realizado com sucesso',
+            'usuario': {
+                'id': cred_usuario.id_usuario,
+                'nome': cred_usuario.nome,
+                'email': cred_usuario.email
+            }
+        })
 
-API_GATEWAY_URL = "https://sua-api-gateway.com/prod/send-email"
-@app.route("/loginAlert", methods=['POST'])
-def loginAlert():  
-    user_id = session.get('usuario_id')
-
-    if not user_id:
-        return jsonify({"erro": "Usuário não autenticado"}), 401
-    usuario = Usuario.query.get(user_id)
-
-    if not usuario:
-        return jsonify({"erro": "Usuário não encontrado"}), 404
-
-    nome_completo = f"{usuario.nome} {usuario.sobrenome}"
-    email = usuario.email
-
-    # Envia para a API de envio de e-mail
-    payload = {
-        "nome": nome_completo,
-        "email": email
-    }
-
-    resposta = request.post(API_GATEWAY_URL, json=payload)
-
-    if resposta.ok:
-        return jsonify({"mensagem": "Login registrado e e-mail enviado"}), 200
-    else:
-        return jsonify({"erro": "Falha ao enviar e-mail"}), 500
+    except Exception as e:
+        return jsonify({'message': f'Erro interno: {str(e)}'}), 500
 
 
 

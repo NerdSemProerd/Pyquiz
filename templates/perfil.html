@@ -13,7 +13,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark mb-4">
         <div class="container">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="{{ url_for('home') }}">
                 <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" height="30" class="me-2">Pyquiz
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -22,7 +22,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#"><i class="fas fa-home me-1"></i> Home</a>
+                        <a class="nav-link active" href="{{ url_for('home') }}"><i class="fas fa-home me-1"></i> Home</a>
                     </li>
                     {% if usuario %}
                     <li class="nav-item dropdown">

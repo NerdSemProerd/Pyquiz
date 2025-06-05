@@ -18,6 +18,7 @@ function iniciarQuiz(quizData) {
   let perguntaAtual = 0;
   let pontuacao = 0;
   let respostaSelecionada = null;
+  let respostasUsuario = [];
 
   const perguntaContainer = document.getElementById("perguntaContainer");
   const opcoesContainer = document.getElementById("opcoesContainer");
@@ -48,28 +49,61 @@ function iniciarQuiz(quizData) {
   }
 
   proximaBtn.onclick = () => {
-      if (respostaSelecionada === perguntas[perguntaAtual].resposta) {
-          pontuacao++;
-      }
+    respostasUsuario[perguntaAtual] = respostaSelecionada;
+    
+    if (respostaSelecionada === perguntas[perguntaAtual].resposta) {
+        pontuacao++;
+    }
 
-      perguntaAtual++;
+    perguntaAtual++;
 
-      if (perguntaAtual < perguntas.length) {
-          carregarPergunta();
-      } else {
-          mostrarResultado();
-      }
-  };
+    if (perguntaAtual < perguntas.length) {
+        carregarPergunta();
+    } else {
+        mostrarResultado();
+    }
+};
 
   function mostrarResultado() {
-      document.getElementById("quizContainer").style.display = "none";
-      resultadoFinal.style.display = "block";
-      resultadoFinal.innerHTML = `
-          <h2>Quiz Finalizado!</h2>
-          <p>Sua pontuação: ${pontuacao} de ${perguntas.length}</p>
-          <p>Quiz: ${quizData.nome}</p>
-      `;
-  }
+    document.getElementById("quizContainer").style.display = "none";
+    resultadoFinal.style.display = "block";
+    
+    // Cria o cabeçalho com a pontuação
+    resultadoFinal.innerHTML = `
+        <h2>Quiz Finalizado!</h2>
+        <p>Sua pontuação: ${pontuacao} de ${perguntas.length}</p>
+        <p>Quiz: ${quizData.nome}</p>
+        <div id="resumoPerguntas"></div>
+    `;
+    
+    const resumoContainer = document.getElementById("resumoPerguntas");
+    
+    // Adiciona cada pergunta com as alternativas
+    perguntas.forEach((pergunta, index) => {
+        const perguntaDiv = document.createElement("div");
+        perguntaDiv.className = "resumo-pergunta";
+        
+        // Verifica se a resposta estava correta
+        const respostaUsuario = respostasUsuario[index];
+        const estavaCorreta = respostaUsuario === pergunta.resposta;
+        
+        perguntaDiv.innerHTML = `
+            <h3>${index + 1}. ${pergunta.pergunta}</h3>
+            <div class="resumo-opcoes">
+                ${pergunta.opcoes.map(opcao => `
+                    <div class="resumo-opcao 
+                        ${opcao === pergunta.resposta ? 'resumo-correta' : ''}
+                        ${!estavaCorreta && opcao === respostaUsuario ? 'resumo-errada' : ''}">
+                        ${opcao}
+                    </div>
+                `).join('')}
+            </div>
+            ${!estavaCorreta ? `<p class="feedback">Você respondeu: ${respostaUsuario || "Nenhuma resposta"}</p>` : ''}
+        `;
+        
+        resumoContainer.appendChild(perguntaDiv);
+    });
+}
 
   carregarPergunta();
 }

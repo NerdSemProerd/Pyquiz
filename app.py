@@ -34,8 +34,8 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)  # Define o tempo de
 # Cadastro de banco com SQLAlchemy
 # Configura o banco (pode ser SQLite, PostgreSQL, etc)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:Univel123*marcos@pyquiz.cyb5mu8yf2kt.us-east-1.rds.amazonaws.com:5432/pyquiz'
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.192.45:5432/pyquiz'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:Univel123*marcos@pyquiz.cyb5mu8yf2kt.us-east-1.rds.amazonaws.com:5432/pyquiz'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.192.45:5432/pyquiz'
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.1.3:5432/pyquiz'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -77,7 +77,8 @@ class Questao_resposta(db.Model):
 
     id_resposta = db.Column(db.Integer, primary_key=True)
     resposta = db.Column(db.String(255))
-    pontuacao = db.Column(db.Float)
+    # pontuacao = db.Column(db.Float)
+    correta = db.Column(db.Boolean, default=False)
     question_id = db.Column('id_questao', db.Integer, db.ForeignKey('questao.id_questao'))  # Mapeia para a coluna correta
 
 
@@ -264,7 +265,7 @@ def salvar_quiz(json_data):
         for resposta_json in questao_json['answers']:
             nova_resposta = Questao_resposta(
                 resposta=resposta_json['text'],  # Alterado para 'text' que é a chave no JSON
-                pontuacao=resposta_json['points'],
+                correta=resposta_json['correta'],
                 question_id=nova_questao.id_questao
             )
             db.session.add(nova_resposta)
@@ -326,12 +327,12 @@ def get_quiz_questions(quiz_id):
             for resposta in questao.respostas:
                 opcao = {
                     'texto': resposta.resposta,
-                    'pontuacao': resposta.pontuacao
+                    'correta': resposta.correta
                 }
                 questao_data['opcoes'].append(opcao)
                 
-                # Assumindo que a resposta correta é a com maior pontuação
-                if resposta.pontuacao == 1.0:  # ou qualquer lógica que determine a resposta correta
+                # Verifica se é a resposta correta
+                if resposta.correta:
                     questao_data['resposta'] = resposta.resposta
             
             quiz_data['perguntas'].append(questao_data)

@@ -135,4 +135,46 @@ h1 {
   font-weight: bold;
   color: var(--azul-medio);
 }
+/* Estilos para o resumo final */
+.resumo-pergunta {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background-color: var(--azul-claro);
+  border-radius: 8px;
+}
 
+.resumo-pergunta h3 {
+  color: var(--azul-escuro);
+  margin-bottom: 1rem;
+}
+
+.resumo-opcoes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.resumo-opcao {
+  padding: 0.8rem;
+  border-radius: 6px;
+  background-color: var(--branco);
+  border: 1px solid var(--azul-medio);
+}
+
+.resumo-correta {
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+  color: #155724;
+}
+
+.resumo-errada {
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+  color: #721c24;
+}
+
+.feedback {
+  margin-top: 0.5rem;
+  font-style: italic;
+  color: var(--azul-escuro);
+}

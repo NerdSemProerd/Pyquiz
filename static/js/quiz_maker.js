@@ -70,9 +70,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="col-md-7">
                     <input type="text" class="form-control answer-text" placeholder="Texto da resposta" required minlength="1">
                 </div>
-                <div class="col-md-3">
-                    <input type="number" class="form-control answer-points" placeholder="Pontuação" step="0.1" min="0" required>
-                </div>
+                <div class="col-md-3 text-center">
+            <input type="radio" name="correct-answer-${questionId}" class="form-check-input mark-correct">
+             <label class="form-check-label ms-1">Correta</label>
+            </div>
+
                 <div class="col-md-2">
                     <button type="button" class="btn btn-sm btn-outline-danger delete-answer">×</button>
                 </div>
@@ -146,10 +148,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     isValid = false;
                 }
                 
-                if (!answerPoints.value.trim() || isNaN(parseFloat(answerPoints.value))) {
-                    answerPoints.classList.add('is-invalid');
+                const correctMarked = Array.from(answers).filter(a => a.querySelector('.mark-correct').checked);
+                    if (correctMarked.length !== 1) {
+                    alert(`A questão ${index + 1} deve ter exatamente uma resposta correta!`);
                     isValid = false;
-                }
+                    }
+
             });
         });
         
@@ -177,7 +181,8 @@ document.addEventListener('DOMContentLoaded', () => {
             question.querySelectorAll('.answer-item').forEach(answer => {
                 questionData.answers.push({
                     text: answer.querySelector('.answer-text').value,
-                    points: parseFloat(answer.querySelector('.answer-points').value) || 0
+                    correta: answer.querySelector('.mark-correct').checked
+
                 });
             });
 

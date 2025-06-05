@@ -7,7 +7,6 @@ from datetime import timedelta
 import requests
 # from cadastro_usuario.rotas_cad_user import cad_user_bp
 import os
-import psycopg2
 
 
 

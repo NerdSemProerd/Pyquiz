@@ -113,6 +113,37 @@ def login():
             
         session['usuario_id'] = cred_usuario.id_usuario
         return jsonify({'mensagem': 'Login realizado com sucesso'})
+    
+
+API_GATEWAY_URL = "https://sua-api-gateway.com/prod/send-email"
+@app.route("/loginAlert", methods=['POST'])
+def loginAlert():  
+    user_id = session.get('usuario_id')
+
+    if not user_id:
+        return jsonify({"erro": "Usuário não autenticado"}), 401
+    usuario = Usuario.query.get(user_id)
+
+    if not usuario:
+        return jsonify({"erro": "Usuário não encontrado"}), 404
+
+    nome_completo = f"{usuario.nome} {usuario.sobrenome}"
+    email = usuario.email
+
+    # Envia para a API de envio de e-mail
+    payload = {
+        "nome": nome_completo,
+        "email": email
+    }
+
+    resposta = request.post(API_GATEWAY_URL, json=payload)
+
+    if resposta.ok:
+        return jsonify({"mensagem": "Login registrado e e-mail enviado"}), 200
+    else:
+        return jsonify({"erro": "Falha ao enviar e-mail"}), 500
+
+
 
 @app.route('/logout')
 def logout():
@@ -202,7 +233,6 @@ def criar_quiz():
     if 'usuario_id' in session:
         usuario = db.session.get(Usuario, session['usuario_id'])
     return render_template("quiz_maker.html", usuario=usuario)
-
 
 
 @app.route("/salvar_quiz", methods=['POST'])  

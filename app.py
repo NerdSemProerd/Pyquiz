@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import timedelta
-
+# import requests
 # from cadastro_usuario.rotas_cad_user import cad_user_bp
 import os
 import psycopg2
@@ -20,8 +20,8 @@ app.secret_key = 'chave-muito-secreta'
 # app.register_blueprint(cad_user_bp, url_prefix='/usuario')  # Registra o blueprint com o prefixo /usuario
 
 # DB_HOST = "192.168.192.45"  # Altere conforme necessário
-# DB_HOST = "192.168.1.3"  
-DB_HOST = "pyquiz.cyb5mu8yf2kt.us-east-1.rds.amazonaws.com"
+DB_HOST = "192.168.1.3"  
+# DB_HOST = "pyquiz.cyb5mu8yf2kt.us-east-1.rds.amazonaws.com"
 DB_NAME = "pyquiz"  # Nome do banco de dados
 DB_USER = "postgres"  # Usuário do banco
 DB_PASSWORD = "Univel123*marcos"  # Senha do banco
@@ -35,8 +35,8 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)  # Define o tempo de
 # Configura o banco (pode ser SQLite, PostgreSQL, etc)
 
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:Univel123*marcos@pyquiz.cyb5mu8yf2kt.us-east-1.rds.amazonaws.com:5432/pyquiz'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.192.45:5432/pyquiz'
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.1.3:5432/pyquiz'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.192.45:5432/pyquiz'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:a11anl3tciaem4nue11@192.168.1.3:5432/pyquiz'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Inicializa o SQLAlchemy com o app
@@ -47,10 +47,14 @@ class Usuario(db.Model):
     __tablename__ = 'usuarios'
 
     id_usuario = db.Column(db.Integer, primary_key=True)
-    nome = db.Column(db.String(100), unique=True, nullable=False)
-    email = db.Column(db.String(255))
-    senha_hash = db.Column(db.String(255))
-    autonomia = db.Column(db.String(20), default='user')  # 'Comum' ou 'Admin'
+    nome = db.Column(db.String(100), nullable=False)
+    sobrenome = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(255), unique=True, nullable=False)
+    telefone = db.Column(db.String(20))
+    idade = db.Column(db.Integer)
+    localizacao = db.Column(db.String(100))
+    senha_hash = db.Column(db.String(255), nullable=False)
+    autonomia = db.Column(db.String(20), default='user')  # 'user' ou 'admin'
 
 class Quiz_nome(db.Model):
     __tablename__ = 'quiz'
@@ -159,41 +163,30 @@ def form_cad_usuario():
 @app.route("/cadastro_usuario", methods=['POST'])  
 def cad_usuario():
     if request.method == 'POST':
+        data = request.get_json()
         
-        # nome = request.form['nome']
-        nome = request.form.get("nome")
-        sobrenome = request.form.get("sobrenome")
-        email = request.form.get("email")
-        telefone = request.form.get("telefone")
-        senha = request.form.get("senha")
-        
-        senha_hash = generate_password_hash(senha)
-        
-        # print(request.form)
-        print(f"Nome: {nome}")
-        print(f"Sobrenome: {sobrenome}")
-        print(f"Email: {email}")
-        print(f"Telefone: {telefone}")
-        print(f"Senha: {senha_hash}")
-
-        try:
-            conn = psycopg2.connect(
-                host=DB_HOST,
-                database=DB_NAME,
-                user=DB_USER,
-                password=DB_PASSWORD
-            )
-            cur = conn.cursor()
+        # Verifica se o email já existe
+        if Usuario.query.filter_by(email=data['email']).first():
+            return jsonify({'error': 'Email já cadastrado'}), 400
             
-            query = "INSERT INTO usuarios (nome, sobrenome, email, senha_hash) VALUES (%s, %s, %s, %s)"
-            cur.execute(query, (nome, sobrenome, email, senha_hash))
-            conn.commit()
-
-            cur.close()
-            conn.close()
-            return "Cadastro realizado com sucesso!" and redirect('/')
+        try:
+            novo_usuario = Usuario(
+                nome=data['nome'],
+                sobrenome=data['sobrenome'],
+                email=data['email'],
+                telefone=data.get('telefone'),
+                idade=data.get('idade'),
+                localizacao=data.get('localizacao'),
+                senha_hash=generate_password_hash(data['senha'])
+            )
+            
+            db.session.add(novo_usuario)
+            db.session.commit()
+            
+            return jsonify({'message': 'Cadastro realizado com sucesso!'}), 201
         except Exception as e:
-            return f"Erro ao cadastrar usuário: {e}"
+            db.session.rollback()
+            return jsonify({'error': str(e)}), 500
         
 
 @app.route('/perfil')
